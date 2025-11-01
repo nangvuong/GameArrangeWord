@@ -2,8 +2,10 @@ package main;
 
 import javax.swing.*;
 import com.formdev.flatlaf.FlatLightLaf;
+
+import main.Home.Home;
 import main.auth.Login;
-import main.game.GamePanel;
+import main.auth.Register;
 
 public class Main {
     public static void main(String[] args) {
@@ -18,16 +20,53 @@ public class Main {
         JFrame window = new JFrame("Word Arrange");
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);
+        window.setSize(1000, 700); // Kích thước cho layout
+        window.setLocationRelativeTo(null);
 
-        // Tạo panel Login và callback khi đăng nhập thành công
-        Login loginPanel = new Login(() -> {
-            window.setContentPane(new GamePanel());
+        // Tạo Login panel (cần để final để dùng trong lambda)
+        final Login[] loginPanelRef = new Login[1];
+        
+        loginPanelRef[0] = new Login(() -> {
+            Home homePanel = new Home();
+            homePanel.setLogoutCallback(() -> {
+                loginPanelRef[0].resetForm();
+                window.setContentPane(loginPanelRef[0]);
+                window.revalidate();
+                window.repaint();
+            });
+            window.setContentPane(homePanel);
             window.revalidate();
+            window.repaint();
         });
 
-        window.add(loginPanel);
-        window.setSize(900, 600); // Kích thước cho layout 2 cột
-        window.setLocationRelativeTo(null);
+        // Kết nối nút "Tạo tài khoản" của Login với Register
+        loginPanelRef[0].setRegisterCallback(() -> {
+            Register registerPanel = new Register(() -> {
+                Home homePanel = new Home();
+                homePanel.setLogoutCallback(() -> {
+                    loginPanelRef[0].resetForm();
+                    window.setContentPane(loginPanelRef[0]);
+                    window.revalidate();
+                    window.repaint();
+                });
+                window.setContentPane(homePanel);
+                window.revalidate();
+                window.repaint();
+            });
+
+            registerPanel.setBackCallback(() -> {
+                loginPanelRef[0].resetForm();
+                window.setContentPane(loginPanelRef[0]);
+                window.revalidate();
+                window.repaint();
+            });
+
+            window.setContentPane(registerPanel);
+            window.revalidate();
+            window.repaint();
+        });
+
+        window.add(loginPanelRef[0]);
         window.setVisible(true);
     }
 }
