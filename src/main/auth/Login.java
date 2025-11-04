@@ -9,7 +9,7 @@ import javax.swing.border.EmptyBorder;
 public class Login extends JPanel {
 
     public interface LoginCallback {
-        void onLoginSuccess();
+        void onLoginSuccess(String username);
     }
     
     public interface RegisterCallback {
@@ -242,7 +242,7 @@ public class Login extends JPanel {
             messageLabel.setText("⚠️ Vui lòng nhập đầy đủ thông tin!");
         } else {
             messageLabel.setText("");
-            loginCallback.onLoginSuccess();
+            loginCallback.onLoginSuccess(user);
             setVisible(false);
         }
     }

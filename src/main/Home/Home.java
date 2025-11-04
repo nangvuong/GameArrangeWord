@@ -9,24 +9,44 @@ import javax.swing.border.EmptyBorder;
 public class Home extends JPanel {
 
     private JPanel tabContentPanel;
+    private HomeTab homeTab;
     private TabButton homeTabBtn;
     private TabButton profileTabBtn;
     private TabButton historyTabBtn;
     private TabButton rankTabBtn;
     private LogoutCallback logoutCallback;
+    private GameStartCallback gameStartCallback;
+    private String playerUsername = "Player";
 
     public interface LogoutCallback {
         void onLogout();
     }
 
+    public interface GameStartCallback {
+        void onGameStart();
+    }
+
     public Home() {
+        this("Player");
+    }
+
+    public Home(String playerUsername) {
         setLayout(new BorderLayout());
         setBackground(new Color(240, 242, 245));
+        this.playerUsername = playerUsername;
 
         JPanel headerPanel = createHeaderPanel();
         tabContentPanel = new JPanel(new CardLayout());
         tabContentPanel.setBackground(Color.WHITE);
-        tabContentPanel.add(new HomeTab(), "HOME");
+        
+        homeTab = new HomeTab();
+        homeTab.setStartGameCallback(() -> {
+            if (gameStartCallback != null) {
+                gameStartCallback.onGameStart();
+            }
+        });
+        
+        tabContentPanel.add(homeTab, "HOME");
         tabContentPanel.add(new ProfileTab(), "PROFILE");
         tabContentPanel.add(new HistoryTab(), "HISTORY");
         tabContentPanel.add(new RankTab(), "RANK");
@@ -156,6 +176,14 @@ public class Home extends JPanel {
 
     public void setLogoutCallback(LogoutCallback callback) {
         this.logoutCallback = callback;
+    }
+
+    public void setGameStartCallback(GameStartCallback callback) {
+        this.gameStartCallback = callback;
+    }
+
+    public String getPlayerUsername() {
+        return playerUsername;
     }
 
     // Custom TabButton class with underline for active state
