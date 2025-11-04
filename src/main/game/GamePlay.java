@@ -4,7 +4,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.*;
-import javax.swing.Timer;
+
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -22,6 +22,7 @@ public class GamePlay extends JPanel {
     private int timeRemaining = TIME_PER_ROUND;
     private Timer gameTimer;
     private boolean roundEnded = false; // Track xem round đã kết thúc
+    private boolean gameEnded = false; // Track xem game đã kết thúc
     
     private String playerName = "Player";
     private String opponentName = "AI";
@@ -37,6 +38,8 @@ public class GamePlay extends JPanel {
     private JLabel roundLabel;
     private JLabel playerNameLabel;
     private JLabel opponentNameLabel;
+    private JPanel playerScorePanel;
+    private JPanel opponentScorePanel;
     private JProgressBar progressBar;
 
     private Runnable onGameEnd;
@@ -111,7 +114,7 @@ public class GamePlay extends JPanel {
         playerNameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         
         // Panel chứa score
-        JPanel playerScorePanel = new JPanel() {
+        playerScorePanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -178,7 +181,7 @@ public class GamePlay extends JPanel {
         opponentNameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         
         // Panel chứa score
-        JPanel opponentScorePanel = new JPanel() {
+        opponentScorePanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -358,6 +361,11 @@ public class GamePlay extends JPanel {
     }
 
     private void selectLetter(int index) {
+        // Kiểm tra xem game đã kết thúc chưa
+        if (gameEnded) {
+            return;
+        }
+        
         // Tìm vị trí trống đầu tiên trong answerLetters
         int emptyPos = -1;
         for (int i = 0; i < answerLetters.length; i++) {
@@ -380,12 +388,17 @@ public class GamePlay extends JPanel {
     }
 
     private void removeLetter(int index) {
+        // Kiểm tra xem game đã kết thúc chưa
+        if (gameEnded) {
+            return;
+        }
+        
         // index là vị trí trong answerLetters
         if (index >= 0 && index < answerLetters.length && !answerLetters[index].isEmpty()) {
             String letterToRemove = answerLetters[index];
             
             // Tìm chỉ số ký tự trong mảng scrambledLetters để unmark
-            for (int i = 0; i < scrambledLetters.length; i++) {
+            for (int i = scrambledLetters.length - 1; i >= 0; i--) {
                 if (usedLetters[i] && scrambledLetters[i].equals(letterToRemove)) {
                     usedLetters[i] = false;
                     break;
@@ -412,51 +425,50 @@ public class GamePlay extends JPanel {
         if (allUsed) {
             // Đánh dấu round đã kết thúc để timer không gọi lại
             roundEnded = true;
-            gameTimer.stop();
-            
-            // Cộng điểm: mỗi ký tự đúng = +10đ
-            int correctCount = 0;
-            StringBuilder currentAnswer = new StringBuilder();
-            for (int i = 0; i < correctWord.length(); i++) {
-                currentAnswer.append(answerLetters[i]);
-                if (answerLetters[i].equals(String.valueOf(correctWord.charAt(i)))) {
-                    correctCount++;
-                }
+            if (gameTimer != null) {
+                gameTimer.stop();
             }
-            
-            // Cộng điểm cho player dựa trên số ký tự đúng
-            int pointsEarned = correctCount * 10;
-            playerScore += pointsEarned;
-            if (pointsEarned == 0) {
-                opponentScore += 10; // Sai hết thì AI +10
-            }
-            
-            // Nếu sai, hiển thị đáp án đúng
-            if (!currentAnswer.toString().equals(correctWord)) {
-                for (int i = 0; i < correctWord.length(); i++) {
-                    answerLetters[i] = String.valueOf(correctWord.charAt(i));
-                }
-                updateAnswerPanel();
-            }
-            
-            // Chuyển round ngay lập tức
-            new Timer(100, e -> {
-                roundEnded = false;
+
+            // Chờ 500ms rồi chuyển sang round tiếp
+            Timer delayTimer = new Timer(500, e -> {
                 resetRound();
-            }).start();
+            });
+            delayTimer.setRepeats(false);
+            delayTimer.start();
         }
     }
 
     private void resetRound() {
+        // Cộng điểm: mỗi ký tự đúng = +10đ
+        int correctCount = 0;
+        for (int i = 0; i < correctWord.length(); i++) {
+            if (answerLetters[i].equals(String.valueOf(correctWord.charAt(i)))) {
+                correctCount++;
+            }
+        }
+        
+        // Cộng điểm cho player dựa trên số ký tự đúng
+        int pointsEarned = correctCount * 10;
+        playerScore += pointsEarned;
+
+        playerScorePanel.repaint();
+
         if (currentRound < TOTAL_ROUNDS) {
+            // Chuẩn bị round tiếp theo
             currentRound++;
             roundLabel.setText("Round: " + currentRound + "/" + TOTAL_ROUNDS);
             timeRemaining = TIME_PER_ROUND;
+            timerLabel.setText(timeRemaining + "s");
+            timerLabel.setForeground(new Color(255, 100, 100));
+            progressBar.setValue(TIME_PER_ROUND);
+            progressBar.setForeground(new Color(255, 165, 0));
             initGame();
             updateAnswerPanel();
             updateLettersPanel();
+            roundEnded = false; // Unlock game for next round
             startTimer(); // Start timer mới cho round tiếp
         } else {
+            // Game kết thúc
             endGame();
         }
     }
@@ -480,24 +492,6 @@ public class GamePlay extends JPanel {
         return panel;
     }
 
-    private void startScoreAnimation() {
-        if (scoreAnimationTimer != null) {
-            scoreAnimationTimer.stop();
-        }
-        
-        scoreAnimationTimer = new Timer(16, e -> {
-            animationCounter--;
-            repaint();
-            
-            if (animationCounter <= 0) {
-                scoreAnimationTimer.stop();
-                playerScoreAnimation = "";
-                opponentScoreAnimation = "";
-            }
-        });
-        scoreAnimationTimer.start();
-    }
-
     private void startTimer() {
         gameTimer = new Timer(1000, e -> {
             // Nếu round đã kết thúc (người chơi đã fill hết), không chạy timer nữa
@@ -512,23 +506,22 @@ public class GamePlay extends JPanel {
 
                 if (timeRemaining <= 5) {
                     timerLabel.setForeground(new Color(255, 50, 50));
+                    progressBar.setForeground(new Color(255, 50, 50));
                 } else {
                     timerLabel.setForeground(new Color(255, 100, 100));
+                    progressBar.setForeground(new Color(255, 165, 0));
                 }
             } else {
                 gameTimer.stop();
                 // Nếu hết time mà chưa fill hết chữ cái
                 if (!roundEnded) {
                     roundEnded = true;
-                    opponentScore += 10;
-                    opponentScoreAnimation = "+10";
-                    animationCounter = ANIMATION_DURATION;
-                    startScoreAnimation();
-                    
-                    new Timer(100, ev -> {
+                    Timer nextRoundTimer = new Timer(100, ev -> {
                         roundEnded = false;
                         resetRound();
-                    }).start();
+                    });
+                    nextRoundTimer.setRepeats(false);
+                    nextRoundTimer.start();
                 }
             }
         });
@@ -539,37 +532,20 @@ public class GamePlay extends JPanel {
         if (gameTimer != null) {
             gameTimer.stop();
         }
+        
+        gameEnded = true;
 
-        // Tạo GameEnd screen
-        GameEnd gameEndPanel = new GameEnd(playerScore, opponentScore, playerName, opponentName);
-        gameEndPanel.setOnHomeCallback(() -> {
-            if (onGameEnd != null) {
-                onGameEnd.run();
-            }
-        });
-        gameEndPanel.setOnReplayCallback(() -> {
-            // Reset game và chơi lại
-            playerScore = 0;
-            opponentScore = 0;
-            currentRound = 1;
-            timeRemaining = TIME_PER_ROUND;
-            roundEnded = false;
-            initGame();
-            updateAnswerPanel();
-            updateLettersPanel();
-            roundLabel.setText("Round: " + currentRound + "/" + TOTAL_ROUNDS);
-            timerLabel.setText(timeRemaining + "s");
-            startTimer();
-        });
-
-        // Chuyển sang GameEnd panel
-        Container parent = getParent();
-        if (parent instanceof JFrame) {
-            JFrame frame = (JFrame) parent;
-            frame.setContentPane(gameEndPanel);
-            frame.revalidate();
-            frame.repaint();
+        if (onGameEnd != null) {
+            onGameEnd.run();
         }
+    }
+    
+    public int getPlayerScore() {
+        return playerScore;
+    }
+    
+    public int getOpponentScore() {
+        return opponentScore;
     }
 
     public void setOnGameEndCallback(Runnable callback) {

@@ -31,8 +31,8 @@ public class GameStart extends JPanel {
         btnHowToPlay.addActionListener(e -> showHowToPlay());
         add(btnHowToPlay);
 
-        // Nút Play
-        JButton btnPlay = createButton("▶ PLAY", new Color(255, 165, 0), 350, 380);
+        // Nút Play (vòng tròn)
+        JButton btnPlay = createButton("▶", new Color(255, 165, 0), 350, 380);
         btnPlay.setFont(new Font("Segoe UI", Font.BOLD, 32));
         btnPlay.addActionListener(e -> {
             if (onGameStart != null) {
@@ -97,14 +97,13 @@ public class GameStart extends JPanel {
     }
 
     private void showHowToPlay() {
-        String message = "Word Scramble - Hướng dẫn chơi:\n\n" +
+        String message = "Word Arrange - Hướng dẫn chơi:\n\n" +
                 "1. Bạn sẽ được cấp các ký tự bị xáo trộn\n" +
                 "2. Sắp xếp lại các ký tự để tạo thành từ đúng\n" +
                 "3. Mỗi round có 15 giây\n" +
                 "4. Tổng cộng 10 round\n" +
                 "5. Mỗi ký tự đúng + 10 điểm\n" +
-                "6. Người chơi có điểm cao hơn sẽ thắng!\n\n" +
-                "Chúc bạn chơi vui!";
+                "6. Người chơi có điểm cao hơn sẽ thắng!\n\n";
         
         JOptionPane.showMessageDialog(this, message, "Cách chơi", JOptionPane.INFORMATION_MESSAGE);
     }
