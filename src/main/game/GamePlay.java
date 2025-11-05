@@ -423,14 +423,19 @@ public class GamePlay extends JPanel {
         }
         
         if (allUsed) {
-            // Đánh dấu round đã kết thúc để timer không gọi lại
             roundEnded = true;
             if (gameTimer != null) {
                 gameTimer.stop();
             }
 
-            // Chờ 500ms rồi chuyển sang round tiếp
-            Timer delayTimer = new Timer(500, e -> {
+            // === Hiển thị đáp án đúng trước khi qua round mới ===
+            for (int i = 0; i < correctWord.length(); i++) {
+                answerLetters[i] = String.valueOf(correctWord.charAt(i));
+            }
+            updateAnswerPanel(); // Cập nhật giao diện để hiển thị đáp án đúng
+
+            // Chờ 0.5 giây rồi sang round mới
+            Timer delayTimer = new Timer(1000, e -> {
                 resetRound();
             });
             delayTimer.setRepeats(false);

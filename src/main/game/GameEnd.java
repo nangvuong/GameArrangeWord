@@ -110,13 +110,13 @@ public class GameEnd extends JPanel {
 
         // Buttons panel
         JPanel buttonsPanel = new JPanel();
-        buttonsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 50, 20));
+        buttonsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 30, 20));
         buttonsPanel.setBackground(new Color(75, 0, 130));
         buttonsPanel.setOpaque(false);
-        buttonsPanel.setBounds(200, 480, 600, 120);
+        buttonsPanel.setBounds(150, 480, 700, 120);
 
         // Home button
-        JButton homeBtn = createIconButton("🏠", "Home");
+        JButton homeBtn = createButton("🏠 Trang chủ", new Color(100, 149, 237), 280, 80);
         homeBtn.addActionListener(e -> {
             if (onHome != null) {
                 onHome.run();
@@ -125,7 +125,7 @@ public class GameEnd extends JPanel {
         buttonsPanel.add(homeBtn);
 
         // Replay button
-        JButton replayBtn = createIconButton("🔄", "Chơi lại");
+        JButton replayBtn = createButton("🔄 Chơi lại", new Color(255, 165, 0), 280, 80);
         replayBtn.addActionListener(e -> {
             if (onReplay != null) {
                 onReplay.run();
@@ -136,47 +136,57 @@ public class GameEnd extends JPanel {
         add(buttonsPanel);
     }
 
-    private JButton createIconButton(String icon, String label) {
-        JButton btn = new JButton() {
+    private JButton createButton(String text, Color bgColor, int width, int height) {
+        JButton btn = new JButton(text) {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g;
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
+                
+                Color drawColor = bgColor;
                 if (getModel().isArmed()) {
-                    g2.setColor(new Color(100, 150, 255));
+                    int r = Math.max(bgColor.getRed() - 20, 0);
+                    int g_val = Math.max(bgColor.getGreen() - 20, 0);
+                    int b = Math.max(bgColor.getBlue() - 20, 0);
+                    drawColor = new Color(r, g_val, b);
                 } else if (getModel().isRollover()) {
-                    g2.setColor(new Color(120, 170, 255));
-                } else {
-                    g2.setColor(new Color(100, 100, 255));
+                    int r = Math.min(bgColor.getRed() + 30, 255);
+                    int g_val = Math.min(bgColor.getGreen() + 30, 255);
+                    int b = Math.min(bgColor.getBlue() + 30, 255);
+                    drawColor = new Color(r, g_val, b);
                 }
-
+                
+                g2.setColor(drawColor);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 15, 15);
-                g2.setColor(new Color(200, 200, 255));
+                g2.setColor(new Color(180, 180, 230));
                 g2.setStroke(new BasicStroke(2));
                 g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 15, 15);
-
+                
                 super.paintComponent(g);
             }
         };
-
-        btn.setPreferredSize(new Dimension(120, 120));
-        btn.setFont(new Font("Segoe UI", Font.BOLD, 40));
-        btn.setText(icon);
+        
+        btn.setPreferredSize(new Dimension(width, height));
+        btn.setFont(new Font("Segoe UI", Font.BOLD, 20));
         btn.setForeground(Color.WHITE);
         btn.setBorder(BorderFactory.createEmptyBorder());
         btn.setFocusPainted(false);
         btn.setContentAreaFilled(false);
         btn.setOpaque(false);
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
-
+        
         btn.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                btn.setToolTipText(label);
+                btn.repaint();
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btn.repaint();
             }
         });
-
+        
         return btn;
     }
 
