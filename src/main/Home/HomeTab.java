@@ -23,7 +23,7 @@ public class HomeTab extends JPanel {
         title.setFont(new Font("SF Pro Display", Font.BOLD, 28));
         title.setForeground(new Color(33, 33, 33));
 
-        JButton startGameBtn = createGameButton("Bắt đầu chơi", new Color(15, 157, 88));
+        JButton startGameBtn = createGameButton("Bắt đầu chơi", new Color(120, 60, 160)); // Tím nhạt
 
         JPanel centerPanel = new JPanel(new BorderLayout());
         centerPanel.setOpaque(false);

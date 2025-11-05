@@ -43,7 +43,7 @@ public class Register extends JPanel {
 
     private JPanel createLeftPanel() {
         JPanel leftPanel = new JPanel(new GridBagLayout());
-        leftPanel.setBackground(new Color(66, 133, 244));
+        leftPanel.setBackground(new Color(120, 60, 160)); // Tím nhạt
         leftPanel.setPreferredSize(new Dimension(450, 600));
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -55,32 +55,32 @@ public class Register extends JPanel {
         JPanel spacerTop = new JPanel();
         spacerTop.setOpaque(false);
         gbc.gridy = 0;
-        gbc.weighty = 0.3;
+        gbc.weighty = 0.4;
         leftPanel.add(spacerTop, gbc);
         gbc.weighty = 0;
 
         // Tên game
         JLabel gameName = new JLabel("Word Arrange");
-        gameName.setFont(new Font("SF Pro Display", Font.BOLD, 56));
+        gameName.setFont(new Font("SF Pro Display", Font.BOLD, 48));
         gameName.setForeground(Color.WHITE);
         gbc.gridy = 1;
-        gbc.insets = new Insets(0, 0, 15, 0);
+        gbc.insets = new Insets(0, 0, 20, 0);
         leftPanel.add(gameName, gbc);
 
         // Slogan
         JLabel slogan = new JLabel("<html><center>Sắp xếp từ,<br>thử thách trí tuệ</center></html>");
-        slogan.setFont(new Font("SF Pro Display", Font.PLAIN, 17));
+        slogan.setFont(new Font("SF Pro Display", Font.PLAIN, 16));
         slogan.setForeground(new Color(200, 220, 255));
         slogan.setHorizontalAlignment(SwingConstants.CENTER);
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         gbc.insets = new Insets(0, 20, 0, 20);
         leftPanel.add(slogan, gbc);
 
         // Spacer dưới
         JPanel spacerBottom = new JPanel();
         spacerBottom.setOpaque(false);
-        gbc.gridy = 3;
-        gbc.weighty = 0.7;
+        gbc.gridy = 4;
+        gbc.weighty = 0.6;
         leftPanel.add(spacerBottom, gbc);
 
         return leftPanel;
@@ -163,16 +163,16 @@ public class Register extends JPanel {
         rightPanel.add(confirmPasswordField, gbc);
 
         // Nút Tạo tài khoản
-        JButton registerButton = createStyledButton("Tạo tài khoản", new Color(66, 133, 244));
+        JButton registerButton = createStyledButton("Tạo tài khoản", new Color(120, 60, 160)); // Tím nhạt
         registerButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                registerButton.setBackground(new Color(52, 115, 214));
+                registerButton.setBackground(new Color(100, 40, 140));
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                registerButton.setBackground(new Color(66, 133, 244));
+                registerButton.setBackground(new Color(120, 60, 160));
             }
         });
         registerButton.addActionListener(new AbstractAction() {
@@ -185,17 +185,46 @@ public class Register extends JPanel {
         gbc.insets = new Insets(0, 0, 10, 0);
         rightPanel.add(registerButton, gbc);
 
-        // Nút Quay lại
-        JButton backButton = createStyledButton("Quay lại", new Color(100, 100, 100));
+        // Nút Quay lại (Outline style)
+        JButton backButton = new JButton("Quay lại") {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g;
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                
+                // Nền trắng
+                g2.setColor(Color.WHITE);
+                g2.fillRect(0, 0, getWidth(), getHeight());
+                
+                // Viền tím
+                g2.setColor(new Color(120, 60, 160));
+                g2.setStroke(new BasicStroke(2));
+                g2.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
+                
+                // Vẽ text
+                super.paintComponent(g);
+            }
+        };
+        backButton.setFont(new Font("SF Pro Display", Font.BOLD, 14));
+        backButton.setForeground(new Color(120, 60, 160));
+        backButton.setBorder(new EmptyBorder(11, 20, 11, 20));
+        backButton.setFocusPainted(false);
+        backButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        backButton.setOpaque(false);
+        backButton.setContentAreaFilled(false);
+        backButton.setPreferredSize(new Dimension(350, 42));
+        
         backButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                backButton.setBackground(new Color(80, 80, 80));
+                backButton.setBackground(new Color(240, 240, 240));
+                backButton.repaint();
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                backButton.setBackground(new Color(100, 100, 100));
+                backButton.setBackground(Color.WHITE);
+                backButton.repaint();
             }
         });
         backButton.addActionListener(new AbstractAction() {

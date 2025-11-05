@@ -20,7 +20,7 @@ public class GameStart extends JPanel {
 
     private void initializeComponents() {
         // Logo / Title
-        JLabel lblTitle = new JLabel("Word Scramble", SwingConstants.CENTER);
+        JLabel lblTitle = new JLabel("Word Arrange", SwingConstants.CENTER);
         lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 80));
         lblTitle.setForeground(Color.WHITE);
         lblTitle.setBounds(0, 80, 1000, 120);
@@ -97,13 +97,22 @@ public class GameStart extends JPanel {
     }
 
     private void showHowToPlay() {
-        String message = "Word Arrange - Hướng dẫn chơi:\n\n" +
-                "1. Bạn sẽ được cấp các ký tự bị xáo trộn\n" +
-                "2. Sắp xếp lại các ký tự để tạo thành từ đúng\n" +
-                "3. Mỗi round có 15 giây\n" +
-                "4. Tổng cộng 10 round\n" +
-                "5. Mỗi ký tự đúng + 10 điểm\n" +
-                "6. Người chơi có điểm cao hơn sẽ thắng!\n\n";
+        String message = "<html><body style='font-family: Segoe UI; font-size: 14px; padding: 10px;'>" +
+                "<h2 style='color: #4B0082; text-align: center;'>📖 Hướng dẫn chơi</h2>" +
+                "<hr>" +
+                "<p><b>1. 🔤 Ký tự bị xáo trộn</b><br>" +
+                "   Bạn sẽ được cấp các ký tự bị xáo trộn</p>" +
+                "<p><b>2. 🎯 Sắp xếp đúng</b><br>" +
+                "   Sắp xếp lại các ký tự để tạo thành từ đúng</p>" +
+                "<p><b>3. ⏱️ Thời gian</b><br>" +
+                "   Mỗi round có 15 giây</p>" +
+                "<p><b>4. 🔁 Tổng số round</b><br>" +
+                "   Tổng cộng 10 round</p>" +
+                "<p><b>5. ⭐ Tính điểm</b><br>" +
+                "   Mỗi ký tự đúng + 10 điểm</p>" +
+                "<p><b>6. 🏆 Người thắng</b><br>" +
+                "   Người chơi có điểm cao hơn sẽ thắng!</p>" +
+                "</body></html>";
         
         JOptionPane.showMessageDialog(this, message, "Cách chơi", JOptionPane.INFORMATION_MESSAGE);
     }

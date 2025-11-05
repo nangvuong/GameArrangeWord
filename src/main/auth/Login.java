@@ -41,7 +41,7 @@ public class Login extends JPanel {
 
     private JPanel createLeftPanel() {
         JPanel leftPanel = new JPanel(new GridBagLayout());
-        leftPanel.setBackground(new Color(66, 133, 244));
+        leftPanel.setBackground(new Color(120, 60, 160)); // Tím nhạt
         leftPanel.setPreferredSize(new Dimension(450, 600));
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -86,7 +86,7 @@ public class Login extends JPanel {
 
     private JPanel createRightPanel() {
         JPanel rightPanel = new JPanel(new GridBagLayout());
-        rightPanel.setBackground(Color.WHITE);
+        rightPanel.setBackground(Color.WHITE); // Neutral - Trắng
         rightPanel.setPreferredSize(new Dimension(450, 600));
         rightPanel.setBorder(new EmptyBorder(40, 40, 40, 40));
 
@@ -132,16 +132,16 @@ public class Login extends JPanel {
         rightPanel.add(passwordField, gbc);
 
         // Nút Đăng nhập
-        JButton loginButton = createStyledButton("Đăng Nhập", new Color(66, 133, 244));
+        JButton loginButton = createStyledButton("Đăng Nhập", new Color(120, 60, 160)); // Tím nhạt
         loginButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                loginButton.setBackground(new Color(52, 115, 214));
+                loginButton.setBackground(new Color(100, 40, 140)); // Tím đậm hơn
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                loginButton.setBackground(new Color(66, 133, 244));
+                loginButton.setBackground(new Color(120, 60, 160));
             }
         });
         loginButton.addActionListener(new AbstractAction() {
@@ -154,17 +154,46 @@ public class Login extends JPanel {
         gbc.insets = new Insets(0, 0, 12, 0);
         rightPanel.add(loginButton, gbc);
 
-        // Nút Tạo tài khoản
-        JButton registerButton = createStyledButton("Tạo tài khoản", new Color(100, 100, 100));
+        // Nút Tạo tài khoản (Outline style)
+        JButton registerButton = new JButton("Tạo tài khoản") {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g;
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                
+                // Nền trắng
+                g2.setColor(Color.WHITE);
+                g2.fillRect(0, 0, getWidth(), getHeight());
+                
+                // Viền tím
+                g2.setColor(new Color(120, 60, 160));
+                g2.setStroke(new BasicStroke(2));
+                g2.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
+                
+                // Vẽ text
+                super.paintComponent(g);
+            }
+        };
+        registerButton.setFont(new Font("SF Pro Display", Font.BOLD, 14));
+        registerButton.setForeground(new Color(120, 60, 160));
+        registerButton.setBorder(new EmptyBorder(11, 20, 11, 20));
+        registerButton.setFocusPainted(false);
+        registerButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        registerButton.setOpaque(false);
+        registerButton.setContentAreaFilled(false);
+        registerButton.setPreferredSize(new Dimension(350, 42));
+        
         registerButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                registerButton.setBackground(new Color(80, 80, 80));
+                registerButton.setBackground(new Color(240, 240, 240));
+                registerButton.repaint();
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                registerButton.setBackground(new Color(100, 100, 100));
+                registerButton.setBackground(Color.WHITE);
+                registerButton.repaint();
             }
         });
         registerButton.addActionListener(new AbstractAction() {

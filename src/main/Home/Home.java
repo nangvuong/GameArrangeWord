@@ -58,11 +58,11 @@ public class Home extends JPanel {
 
     private JPanel createHeaderPanel() {
         JPanel mainHeaderPanel = new JPanel(new BorderLayout());
-        mainHeaderPanel.setBackground(new Color(66, 133, 244));
+        mainHeaderPanel.setBackground(new Color(120, 60, 160)); // Tím nhạt
         mainHeaderPanel.setPreferredSize(new Dimension(0, 70));
 
         JPanel headerPanel = new JPanel();
-        headerPanel.setBackground(new Color(66, 133, 244));
+        headerPanel.setBackground(new Color(120, 60, 160)); // Tím nhạt
         headerPanel.setLayout(new GridBagLayout());
         headerPanel.setBorder(new EmptyBorder(12, 25, 12, 25));
 
@@ -116,7 +116,7 @@ public class Home extends JPanel {
 
         // Separator line
         JSeparator separator = new JSeparator();
-        separator.setForeground(new Color(33, 100, 200));
+        separator.setForeground(new Color(100, 40, 140)); // Tím đậm
         separator.setPreferredSize(new Dimension(0, 2));
 
         mainHeaderPanel.add(headerPanel, BorderLayout.CENTER);
@@ -128,7 +128,7 @@ public class Home extends JPanel {
         TabButton btn = new TabButton(text);
         btn.setFont(new Font("SF Pro Display", Font.PLAIN, 15));
         btn.setForeground(Color.WHITE);
-        btn.setBackground(new Color(66, 133, 244));
+        btn.setBackground(new Color(120, 60, 160)); // Tím nhạt
         btn.setBorder(BorderFactory.createEmptyBorder(8, 16, 8, 16));
         btn.setFocusPainted(false);
         btn.setOpaque(false);
@@ -137,7 +137,7 @@ public class Home extends JPanel {
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         btn.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent e) { btn.setForeground(new Color(200, 220, 255)); }
+            public void mouseEntered(MouseEvent e) { btn.setForeground(new Color(220, 200, 255)); }
             public void mouseExited(MouseEvent e) { btn.setForeground(Color.WHITE); }
         });
         return btn;
@@ -147,7 +147,7 @@ public class Home extends JPanel {
         JButton btn = new JButton(text);
         btn.setFont(new Font("SF Pro Display", Font.PLAIN, 14));
         btn.setForeground(Color.WHITE);
-        btn.setBackground(new Color(200, 16, 46));
+        btn.setBackground(new Color(255, 165, 0)); // Cam
         btn.setBorder(BorderFactory.createEmptyBorder(8, 16, 8, 16));
         btn.setFocusPainted(false);
         btn.setOpaque(true);
@@ -156,8 +156,8 @@ public class Home extends JPanel {
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         btn.addMouseListener(new MouseAdapter() {
-            public void mouseEntered(MouseEvent e) { btn.setBackground(new Color(180, 10, 36)); }
-            public void mouseExited(MouseEvent e) { btn.setBackground(new Color(200, 16, 46)); }
+            public void mouseEntered(MouseEvent e) { btn.setBackground(new Color(255, 180, 40)); } // Cam sáng
+            public void mouseExited(MouseEvent e) { btn.setBackground(new Color(255, 165, 0)); } // Cam
         });
         return btn;
     }

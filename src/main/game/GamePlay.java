@@ -17,7 +17,9 @@ public class GamePlay extends JPanel {
     private static final int LETTER_BOX_SPACING = 10;
 
     private int playerScore = 0;
+    private String playerScoreLabel = "0";
     private int opponentScore = 0;
+    private String opponentScoreLabel = "0";
     private int currentRound = 1;
     private int timeRemaining = TIME_PER_ROUND;
     private Timer gameTimer;
@@ -31,8 +33,11 @@ public class GamePlay extends JPanel {
     private String[] scrambledLetters; // Ô ký tự
     private String correctWord = "EFFECT";
     private boolean[] usedLetters;
+    private int[] showResultColors;
+
 
     private JPanel answerPanel;
+    private JLabel hintLabel;
     private JPanel lettersPanel;
     private JLabel timerLabel;
     private JLabel roundLabel;
@@ -65,7 +70,10 @@ public class GamePlay extends JPanel {
         // Chuẩn bị các ô trống
         answerLetters = new String[correctWord.length()];
         Arrays.fill(answerLetters, "");
-        
+
+        showResultColors = new int[correctWord.length()];
+        Arrays.fill(showResultColors, 0);
+
         // Chuẩn bị ký tự xáo trộn
         scrambledLetters = correctWord.split("");
         java.util.List<String> list = Arrays.asList(scrambledLetters);
@@ -124,7 +132,7 @@ public class GamePlay extends JPanel {
                 // Vẽ số điểm chính
                 g2.setColor(Color.WHITE);
                 g2.setFont(new Font("Segoe UI", Font.BOLD, 28));
-                String scoreText = String.valueOf(playerScore);
+                String scoreText = playerScoreLabel;
                 FontMetrics fm = g2.getFontMetrics();
                 int scoreX = (getWidth() - fm.stringWidth(scoreText)) / 2;
                 int scoreY = ((getHeight() - fm.getHeight()) / 2) + fm.getAscent();
@@ -191,7 +199,7 @@ public class GamePlay extends JPanel {
                 // Vẽ số điểm chính
                 g2.setColor(Color.WHITE);
                 g2.setFont(new Font("Segoe UI", Font.BOLD, 28));
-                String scoreText = String.valueOf(opponentScore);
+                String scoreText = opponentScoreLabel;
                 FontMetrics fm = g2.getFontMetrics();
                 int scoreX = (getWidth() - fm.stringWidth(scoreText)) / 2;
                 int scoreY = ((getHeight() - fm.getHeight()) / 2) + fm.getAscent();
@@ -220,12 +228,12 @@ public class GamePlay extends JPanel {
         panel.setLayout(null);
         panel.setBackground(new Color(75, 0, 130));
 
-        // Question text
-        JLabel questionLabel = new JLabel("the result of a particular influence");
-        questionLabel.setFont(new Font("Segoe UI", Font.PLAIN, 18));
-        questionLabel.setForeground(new Color(200, 200, 255));
-        questionLabel.setBounds(150, 40, 700, 40);
-        panel.add(questionLabel);
+        // Hint text
+        hintLabel = new JLabel("the result of a particular influence");
+        hintLabel.setFont(new Font("Segoe UI", Font.PLAIN, 18));
+        hintLabel.setForeground(new Color(200, 200, 255));
+        hintLabel.setBounds(150, 40, 700, 40);
+        panel.add(hintLabel);
 
         // Answer Panel (Blank boxes)
         answerPanel = new JPanel();
@@ -265,7 +273,15 @@ public class GamePlay extends JPanel {
                     
                     String text = boxIndex < answerLetters.length ? answerLetters[boxIndex] : "";
                     if (text != null && !text.isEmpty()) {
-                        g2.setColor(Color.WHITE);
+                        // Chỉ hiển thị màu xanh nếu ký tự đó đúng và đang hiển thị kết quả
+                        if (showResultColors[boxIndex] == 1) {
+                            g2.setColor(new Color(0, 255, 120)); // Xanh lá khi đúng
+                        } else if (showResultColors[boxIndex] == -1) {
+                            g2.setColor(Color.RED); // Bình thường (cả khi sai hoặc chưa hiển thị)
+                        } else {
+                            g2.setColor(Color.WHITE); // Bình thường (cả khi sai hoặc chưa hiển thị)
+                        }
+
                         g2.setFont(new Font("Segoe UI", Font.BOLD, 28));
                         FontMetrics fm = g2.getFontMetrics();
                         int x = (getWidth() - fm.stringWidth(text)) / 2;
@@ -412,6 +428,22 @@ public class GamePlay extends JPanel {
         }
     }
 
+    private void calcPointRound() {
+        int correctCount = 0;
+        for (int i = 0; i < correctWord.length(); i++) {
+            if (answerLetters[i].equals(String.valueOf(correctWord.charAt(i)))) {
+                correctCount++;
+            }
+        }
+
+        playerScoreLabel += " + " + String.valueOf(correctCount * 10);
+        playerScorePanel.repaint();
+        
+        // Cộng điểm cho player dựa trên số ký tự đúng
+        int pointsEarned = correctCount * 10;
+        playerScore += pointsEarned;
+    }
+
     private void checkAllLettersUsed() {
         // Kiểm tra xem tất cả chữ cái đã được dùng chưa
         boolean allUsed = true;
@@ -427,9 +459,15 @@ public class GamePlay extends JPanel {
             if (gameTimer != null) {
                 gameTimer.stop();
             }
+            calcPointRound();
 
             // === Hiển thị đáp án đúng trước khi qua round mới ===
             for (int i = 0; i < correctWord.length(); i++) {
+                if (answerLetters[i].equals(String.valueOf(correctWord.charAt(i)))) {
+                    showResultColors[i] = 1;
+                } else {
+                    showResultColors[i] = -1;
+                }
                 answerLetters[i] = String.valueOf(correctWord.charAt(i));
             }
             updateAnswerPanel(); // Cập nhật giao diện để hiển thị đáp án đúng
@@ -444,19 +482,12 @@ public class GamePlay extends JPanel {
     }
 
     private void resetRound() {
-        // Cộng điểm: mỗi ký tự đúng = +10đ
-        int correctCount = 0;
-        for (int i = 0; i < correctWord.length(); i++) {
-            if (answerLetters[i].equals(String.valueOf(correctWord.charAt(i)))) {
-                correctCount++;
-            }
-        }
-        
-        // Cộng điểm cho player dựa trên số ký tự đúng
-        int pointsEarned = correctCount * 10;
-        playerScore += pointsEarned;
+
+        playerScoreLabel = String.valueOf(playerScore);
 
         playerScorePanel.repaint();
+
+        Arrays.fill(showResultColors, 0); // Reset màu hiển thị kết quả
 
         if (currentRound < TOTAL_ROUNDS) {
             // Chuẩn bị round tiếp theo
@@ -517,17 +548,29 @@ public class GamePlay extends JPanel {
                     progressBar.setForeground(new Color(255, 165, 0));
                 }
             } else {
-                gameTimer.stop();
-                // Nếu hết time mà chưa fill hết chữ cái
-                if (!roundEnded) {
-                    roundEnded = true;
-                    Timer nextRoundTimer = new Timer(100, ev -> {
-                        roundEnded = false;
-                        resetRound();
-                    });
-                    nextRoundTimer.setRepeats(false);
-                    nextRoundTimer.start();
+                roundEnded = true;
+                if (gameTimer != null) {
+                    gameTimer.stop();
                 }
+                calcPointRound();
+
+                // === Hiển thị đáp án đúng trước khi qua round mới ===
+                for (int i = 0; i < correctWord.length(); i++) {
+                    if (answerLetters[i].equals(String.valueOf(correctWord.charAt(i)))) {
+                        showResultColors[i] = 1;
+                    } else {
+                        showResultColors[i] = -1;
+                    }
+                    answerLetters[i] = String.valueOf(correctWord.charAt(i));
+                }
+                updateAnswerPanel(); // Cập nhật giao diện để hiển thị đáp án đúng
+
+                // Chờ 0.5 giây rồi sang round mới
+                Timer delayTimer = new Timer(1000, ev -> {
+                    resetRound();
+                });
+                delayTimer.setRepeats(false);
+                delayTimer.start();
             }
         });
         gameTimer.start();
