@@ -5,17 +5,29 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.*;
 
+import model.Match;
+
 public class GameStart extends JPanel {
     private Runnable onGameStart;
+    private Match match;
 
     public GameStart(Runnable onGameStart) {
+        this(onGameStart, null);
+    }
+
+    public GameStart(Runnable onGameStart, Match match) {
         this.onGameStart = onGameStart;
+        this.match = match;
         
         setPreferredSize(new Dimension(1000, 700));
         setBackground(new Color(75, 0, 130)); // Màu tím đậm
         setLayout(null);
 
         initializeComponents();
+    }
+
+    public Match getMatch() {
+        return match;
     }
 
     private void initializeComponents() {

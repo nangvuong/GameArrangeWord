@@ -8,12 +8,13 @@ import main.auth.Login;
 import main.auth.Register;
 import main.game.GamePlay;
 import main.game.GameStart;
+import model.Player;
 import main.game.GameEnd;
 
 public class Main {
     private static JFrame window;
     private static Login loginPanelRef;
-    private static String currentUsername;
+    private static Player currentPlayer;
     
     public static void main(String[] args) {
         // Áp dụng giao diện FlatLaf
@@ -31,23 +32,25 @@ public class Main {
         window.setLocationRelativeTo(null);
 
         loginPanelRef = new Login((username) -> {
-            currentUsername = username;
-            showHomeScreen(username);
+            currentPlayer = loginPanelRef.getPlayer();
+            showHomeScreen(currentPlayer);
         });
 
         loginPanelRef.setRegisterCallback(() -> {
-            Register registerPanel = new Register(() -> {
-                showHomeScreen(currentUsername);
+            final Register[] registerPanelRef = new Register[1];
+            registerPanelRef[0] = new Register(() -> {
+                currentPlayer = registerPanelRef[0].getNewPlayer();
+                showHomeScreen(currentPlayer);
             });
 
-            registerPanel.setBackCallback(() -> {
+            registerPanelRef[0].setBackCallback(() -> {
                 loginPanelRef.resetForm();
                 window.setContentPane(loginPanelRef);
                 window.revalidate();
                 window.repaint();
             });
 
-            window.setContentPane(registerPanel);
+            window.setContentPane(registerPanelRef[0]);
             window.revalidate();
             window.repaint();
         });
@@ -56,8 +59,8 @@ public class Main {
         window.setVisible(true);
     }
 
-    private static void showHomeScreen(String username) {
-        Home homePanel = new Home(username);
+    private static void showHomeScreen(Player currentPlayer) {
+        Home homePanel = new Home(currentPlayer);
         homePanel.setLogoutCallback(() -> {
             loginPanelRef.resetForm();
             window.setContentPane(loginPanelRef);
@@ -65,26 +68,26 @@ public class Main {
             window.repaint();
         });
         homePanel.setGameStartCallback(() -> {
-            showGameStart(username, homePanel);
+            showGameStart(homePanel);
         });
         window.setContentPane(homePanel);
         window.revalidate();
         window.repaint();
     }
 
-    private static void showGameStart(String username, Home homePanel) {
+    private static void showGameStart(Home homePanel) {
         GameStart gameStartPanel = new GameStart(() -> {
-            showGamePlay(username, homePanel);
+            showGamePlay(homePanel);
         });
         window.setContentPane(gameStartPanel);
         window.revalidate();
         window.repaint();
     }
 
-    private static void showGamePlay(String username, Home homePanel) {
-        GamePlay gamePlayPanel = new GamePlay(username, "AI");
+    private static void showGamePlay(Home homePanel) {
+        GamePlay gamePlayPanel = new GamePlay(homePanel.getCurrentPlayer().getUsername(), "AI");
         gamePlayPanel.setOnGameEndCallback(() -> {
-            showGameEnd(gamePlayPanel, username, homePanel);
+            showGameEnd(gamePlayPanel, homePanel.getCurrentPlayer().getUsername(), homePanel);
         });
         window.setContentPane(gamePlayPanel);
         window.revalidate();
@@ -98,12 +101,6 @@ public class Main {
             username,
             "AI"
         );
-        gameEndPanel.setOnHomeCallback(() -> {
-            showHomeScreen(username);
-        });
-        gameEndPanel.setOnReplayCallback(() -> {
-            showGameStart(username, homePanel);
-        });
         window.setContentPane(gameEndPanel);
         window.revalidate();
         window.repaint();

@@ -5,8 +5,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import model.Player;
 
 public class Register extends JPanel {
+
+    private Player newPlayer;
 
     public interface RegisterCallback {
         void onRegisterSuccess();
@@ -308,6 +311,10 @@ public class Register extends JPanel {
             messageLabel.setText("⚠️ Mật khẩu phải tối thiểu 6 ký tự!");
         } else {
             messageLabel.setText("");
+            // Tạo Player object mới với rating = 0.0
+            newPlayer = new Player(fullName, username, password);
+            newPlayer.setRating(0.0); // Rating mặc định cho người chơi mới
+            
             registerCallback.onRegisterSuccess();
             setVisible(false);
         }
@@ -315,5 +322,9 @@ public class Register extends JPanel {
 
     public void setBackCallback(BackCallback callback) {
         this.backCallback = callback;
+    }
+
+    public Player getNewPlayer() {
+        return newPlayer;
     }
 }

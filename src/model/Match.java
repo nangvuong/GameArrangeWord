@@ -8,34 +8,31 @@ public class Match implements Serializable {
     private static final long serialVersionUID = 1L;
     
     private int id;
-    private Player player1;
-    private Player player2;
+    private Playing player1;
+    private Playing player2;
     private int player1_points;
     private int player2_points;
     private Date date;
-    private String status; // ONGOING, COMPLETED, ABANDONED
     private List<Round> rounds;
 
     public Match() {}
 
-    public Match(Player player1, Player player2, Date date) {
+    public Match(Playing player1, Playing player2, Date date) {
         this.player1 = player1;
         this.player2 = player2;
         this.date = date;
         this.player1_points = 0;
         this.player2_points = 0;
-        this.status = "ONGOING";
     }
 
-    public Match(int id, Player player1, Player player2, int player1_points, int player2_points, 
-                 Date date, String status, List<Round> rounds) {
+    public Match(int id, Playing player1, Playing player2, int player1_points, int player2_points, 
+                 Date date, List<Round> rounds) {
         this.id = id;
         this.player1 = player1;
         this.player2 = player2;
         this.player1_points = player1_points;
         this.player2_points = player2_points;
         this.date = date;
-        this.status = status;
         this.rounds = rounds;
     }
 
@@ -47,19 +44,19 @@ public class Match implements Serializable {
         this.id = id;
     }
 
-    public Player getPlayer1() {
+    public Playing getPlayer1() {
         return player1;
     }
 
-    public void setPlayer1(Player player1) {
+    public void setPlayer1(Playing player1) {
         this.player1 = player1;
     }
 
-    public Player getPlayer2() {
+    public Playing getPlayer2() {
         return player2;
     }
 
-    public void setPlayer2(Player player2) {
+    public void setPlayer2(Playing player2) {
         this.player2 = player2;
     }
 
@@ -87,14 +84,6 @@ public class Match implements Serializable {
         this.date = date;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     public List<Round> getRounds() {
         return rounds;
     }
@@ -112,7 +101,6 @@ public class Match implements Serializable {
                 ", player1_points=" + player1_points +
                 ", player2_points=" + player2_points +
                 ", date=" + date +
-                ", status='" + status + '\'' +
                 ", rounds=" + rounds +
                 '}';
     }

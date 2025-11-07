@@ -6,6 +6,8 @@ import java.awt.event.MouseEvent;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import model.Player;
+
 public class Home extends JPanel {
 
     private JPanel tabContentPanel;
@@ -16,7 +18,7 @@ public class Home extends JPanel {
     private TabButton rankTabBtn;
     private LogoutCallback logoutCallback;
     private GameStartCallback gameStartCallback;
-    private String playerUsername = "Player";
+    private Player currentPlayer;
 
     public interface LogoutCallback {
         void onLogout();
@@ -26,24 +28,29 @@ public class Home extends JPanel {
         void onGameStart();
     }
 
-    public Home() {
-        this("Player");
-    }
 
-    public Home(String playerUsername) {
+    public Home( Player currentPlayer) {
         setLayout(new BorderLayout());
         setBackground(new Color(240, 242, 245));
-        this.playerUsername = playerUsername;
+        this.currentPlayer = currentPlayer;
 
         JPanel headerPanel = createHeaderPanel();
         tabContentPanel = new JPanel(new CardLayout());
         tabContentPanel.setBackground(Color.WHITE);
         
-        homeTab = new HomeTab();
+        homeTab = new HomeTab(currentPlayer.getFullName());
         homeTab.setStartGameCallback(() -> {
             if (gameStartCallback != null) {
                 gameStartCallback.onGameStart();
             }
+        });
+        homeTab.setChallengeCallback((targetPlayerUsername) -> {
+            // Handle challenge - send to target player
+            System.out.println(currentPlayer.getFullName() + " challenged " + targetPlayerUsername);
+        });
+        homeTab.setAcceptChallengeCallback((challengerUsername) -> {
+            // Handle accept challenge - start game with challenger
+            System.out.println(currentPlayer.getFullName() + " accepted challenge from " + challengerUsername);
         });
         
         tabContentPanel.add(homeTab, "HOME");
@@ -182,8 +189,8 @@ public class Home extends JPanel {
         this.gameStartCallback = callback;
     }
 
-    public String getPlayerUsername() {
-        return playerUsername;
+    public Player getCurrentPlayer() {
+        return currentPlayer;
     }
 
     // Custom TabButton class with underline for active state

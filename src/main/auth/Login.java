@@ -6,7 +6,11 @@ import java.awt.event.MouseEvent;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import model.Player;
+
 public class Login extends JPanel {
+
+    private Player player;
 
     public interface LoginCallback {
         void onLoginSuccess(String username);
@@ -271,6 +275,10 @@ public class Login extends JPanel {
             messageLabel.setText("⚠️ Vui lòng nhập đầy đủ thông tin!");
         } else {
             messageLabel.setText("");
+            // Tạo Player object khi đăng nhập thành công
+            player = new Player(user, user, pass);
+            player.setRating(0.0); // Mặc định rating = 0.0
+            
             loginCallback.onLoginSuccess(user);
             setVisible(false);
         }
@@ -285,5 +293,9 @@ public class Login extends JPanel {
         passwordField.setText("");
         messageLabel.setText("");
         setVisible(true);
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 }

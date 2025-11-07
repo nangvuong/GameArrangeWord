@@ -7,6 +7,8 @@ import javax.swing.*;
 
 import java.util.Arrays;
 import java.util.Collections;
+import model.Player;
+import model.Match;
 
 public class GamePlay extends JPanel {
     private static final int TOTAL_ROUNDS = 10;
@@ -28,6 +30,9 @@ public class GamePlay extends JPanel {
     
     private String playerName = "Player";
     private String opponentName = "AI";
+    private Player currentPlayer;
+    private Player opponentPlayer;
+    private Match currentMatch;
     
     private String[] answerLetters; // Ô trống để điền
     private String[] scrambledLetters; // Ô ký tự
@@ -582,6 +587,12 @@ public class GamePlay extends JPanel {
         }
         
         gameEnded = true;
+        
+        // Update match with final scores
+        if (currentMatch != null) {
+            currentMatch.setPlayer1_points(playerScore);
+            currentMatch.setPlayer2_points(opponentScore);
+        }
 
         if (onGameEnd != null) {
             onGameEnd.run();
@@ -594,6 +605,18 @@ public class GamePlay extends JPanel {
     
     public int getOpponentScore() {
         return opponentScore;
+    }
+    
+    public Match getMatch() {
+        return currentMatch;
+    }
+    
+    public Player getCurrentPlayer() {
+        return currentPlayer;
+    }
+    
+    public Player getOpponentPlayer() {
+        return opponentPlayer;
     }
 
     public void setOnGameEndCallback(Runnable callback) {
