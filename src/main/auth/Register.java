@@ -313,7 +313,7 @@ public class Register extends JPanel {
             messageLabel.setText("");
             // Tạo Player object mới với rating = 0.0
             newPlayer = new Player(fullName, username, password);
-            newPlayer.setRating(0.0); // Rating mặc định cho người chơi mới
+            newPlayer.setRating(0); // Rating mặc định cho người chơi mới
             
             registerCallback.onRegisterSuccess();
             setVisible(false);

@@ -30,19 +30,19 @@ public class HomeTab extends JPanel {
     }
 
     public interface ChallengeCallback {
-        void onChallenge(String targetPlayerUsername);
+        void onChallenge(Player targetPlayer);
     }
 
     public interface AcceptChallengeCallback {
-        void onAcceptChallenge(String challengerUsername);
+        void onAcceptChallenge(Player challenger);
     }
 
     public HomeTab() {
-        this("Player");
+        this(new Player(0, "Player", "player", "pass", 0, 0, 0, 0));
     }
 
-    public HomeTab(String currentPlayerUsername) {
-        this.currentPlayerUsername = currentPlayerUsername;
+    public HomeTab(Player currentPlayer) {
+        this.currentPlayerUsername = currentPlayer.getFullName();
         this.playerList = new ArrayList<>();
         
         // Mock data
@@ -87,12 +87,13 @@ public class HomeTab extends JPanel {
     }
 
     private void initializeMockPlayers() {
-        playerList.add(new Player(1, "Player A", "Player_A", "pass", 19, 20, 95.0, 0));
-        playerList.add(new Player(2, "Player B", "Player_B", "pass", 17, 20, 85.0, 0));
-        playerList.add(new Player(3, "Player C", "Player_C", "pass", 15, 20, 75.0, -1));
-        playerList.add(new Player(4, "Player D", "Player_D", "pass", 18, 20, 90.0, 0));
-        playerList.add(new Player(5, "Player E", "Player_E", "pass", 16, 20, 80.0, 1));
-        playerList.add(new Player(6, "Player F", "Player_F", "pass", 14, 20, 70.0, -1));
+        // rating = tổng điểm qua tất cả games
+        playerList.add(new Player(1, "Player A", "Player_A", "pass", 19, 20, 2850, 0));
+        playerList.add(new Player(2, "Player B", "Player_B", "pass", 17, 20, 2720, 0));
+        playerList.add(new Player(3, "Player C", "Player_C", "pass", 15, 20, 2650, -1));
+        playerList.add(new Player(4, "Player D", "Player_D", "pass", 18, 20, 2900, 0));
+        playerList.add(new Player(5, "Player E", "Player_E", "pass", 16, 20, 2600, 1));
+        playerList.add(new Player(6, "Player F", "Player_F", "pass", 14, 20, 2400, -1));
     }
 
     private JPanel createLeftPanel() {
@@ -186,8 +187,8 @@ public class HomeTab extends JPanel {
                 statusIcon = "⚫";
                 break;
         }
-        
-        JLabel scoreLabel = new JLabel("⭐ " + String.format("%.1f", player.getRating()) + "% | " + statusIcon + " " + player.getStatusString());
+
+        JLabel scoreLabel = new JLabel("⭐ " + String.format("%d", player.getRating()) + " điểm | " + statusIcon + " " + player.getStatusString());
         scoreLabel.setFont(new Font("SF Pro Display", Font.PLAIN, 11));
         scoreLabel.setForeground(new Color(120, 120, 120));
 
@@ -244,7 +245,7 @@ public class HomeTab extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (canChallenge && challengeCallback != null) {
-                    challengeCallback.onChallenge(player.getUsername());
+                    challengeCallback.onChallenge(player);
                     // Hiển thị giao diện chờ xác nhận
                     showWaitingForResponse(player.getUsername());
                 }
@@ -347,7 +348,7 @@ public class HomeTab extends JPanel {
     }
 
     // Method to show waiting for response screen
-    private void showWaitingForResponse(String targetPlayerUsername) {
+    public void showWaitingForResponse(String targetPlayerUsername) {
         JPanel waitingPanel = createWaitingPanel(targetPlayerUsername);
         centerContentPanel.removeAll();
         centerContentPanel.add(waitingPanel, BorderLayout.CENTER);
@@ -520,7 +521,7 @@ public class HomeTab extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (acceptChallengeCallback != null) {
-                    acceptChallengeCallback.onAcceptChallenge(challenger.getUsername());
+                    acceptChallengeCallback.onAcceptChallenge(challenger);
                 }
                 showDefaultContent();
             }
@@ -622,5 +623,9 @@ public class HomeTab extends JPanel {
         
         playerListPanel.revalidate();
         playerListPanel.repaint();
+    }
+
+    public List<Player> getPlayerList() {
+        return playerList;
     }
 }

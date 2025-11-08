@@ -13,7 +13,7 @@ public class Player implements Serializable {
     private String password;
     private int totalWins;
     private int totalMatches;
-    private double rating;
+    private int rating; // Tổng điểm qua tất cả games
     private int status; // -1: Offline, 0: Online, 1: Playing
 
     public Player() {}
@@ -24,7 +24,7 @@ public class Player implements Serializable {
         this.password = password;
         this.totalWins = 0;
         this.totalMatches = 0;
-        this.rating = 0.0;
+        this.rating = 0;
         this.status = 0; // Online by default
     }
 
@@ -35,11 +35,11 @@ public class Player implements Serializable {
         this.password = password;
         this.totalWins = totalWins;
         this.totalMatches = totalMatches;
-        this.rating = totalMatches > 0 ? (double) totalWins / totalMatches * 100 : 0.0;
+        this.rating = 0; // Sẽ cập nhật từ games
         this.status = 0; // Online by default
     }
 
-    public Player(int id, String fullName, String username, String password, int totalWins, int totalMatches, double rating) {
+    public Player(int id, String fullName, String username, String password, int totalWins, int totalMatches, int rating) {
         this.id = id;
         this.fullName = fullName;
         this.username = username;
@@ -50,7 +50,7 @@ public class Player implements Serializable {
         this.status = 0; // Online by default
     }
 
-    public Player(int id, String fullName, String username, String password, int totalWins, int totalMatches, double rating, int status) {
+    public Player(int id, String fullName, String username, String password, int totalWins, int totalMatches, int rating, int status) {
         this.id = id;
         this.fullName = fullName;
         this.username = username;
@@ -109,11 +109,11 @@ public class Player implements Serializable {
         this.totalMatches = totalMatches;
     }
 
-    public double getRating() {
+    public int getRating() {
         return rating;
     }
 
-    public void setRating(double rating) {
+    public void setRating(int rating) {
         this.rating = rating;
     }
 
@@ -146,7 +146,7 @@ public class Player implements Serializable {
                 ", username='" + username + '\'' +
                 ", totalWins=" + totalWins +
                 ", totalMatches=" + totalMatches +
-                ", rating=" + String.format("%.2f", rating) +
+                ", rating=" + rating +
                 ", status=" + getStatusString() +
                 '}';
     }

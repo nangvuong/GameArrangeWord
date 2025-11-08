@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.*;
+import model.Match;
+import model.Player;
 
 public class GameEnd extends JPanel {
     private int playerScore;
@@ -18,6 +20,29 @@ public class GameEnd extends JPanel {
         this.opponentScore = opponentScore;
         this.playerName = playerName;
         this.opponentName = opponentName;
+
+        setPreferredSize(new Dimension(1000, 700));
+        setBackground(new Color(75, 0, 130));
+        setLayout(null);
+
+        initializeComponents();
+    }
+
+    public GameEnd (Match match, Player player) {
+        // Xác định player nào là opponent dựa vào player truyền vào
+        if (match.getPlayer1().getPlayer().getId() == player.getId()) {
+            // player là player1
+            this.playerScore = match.getPlayer1().getPoint();
+            this.opponentScore = match.getPlayer2().getPoint();
+            this.playerName = player.getFullName();
+            this.opponentName = match.getPlayer2().getPlayer().getFullName();
+        } else {
+            // player là player2
+            this.playerScore = match.getPlayer2().getPoint();
+            this.opponentScore = match.getPlayer1().getPoint();
+            this.playerName = player.getFullName();
+            this.opponentName = match.getPlayer1().getPlayer().getFullName();
+        }
 
         setPreferredSize(new Dimension(1000, 700));
         setBackground(new Color(75, 0, 130));

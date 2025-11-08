@@ -19,6 +19,7 @@ public class Home extends JPanel {
     private LogoutCallback logoutCallback;
     private GameStartCallback gameStartCallback;
     private Player currentPlayer;
+    private Player challengerPlayer;
 
     public interface LogoutCallback {
         void onLogout();
@@ -38,25 +39,29 @@ public class Home extends JPanel {
         tabContentPanel = new JPanel(new CardLayout());
         tabContentPanel.setBackground(Color.WHITE);
         
-        homeTab = new HomeTab(currentPlayer.getFullName());
+        homeTab = new HomeTab(currentPlayer);
         homeTab.setStartGameCallback(() -> {
             if (gameStartCallback != null) {
                 gameStartCallback.onGameStart();
             }
         });
-        homeTab.setChallengeCallback((targetPlayerUsername) -> {
+        homeTab.setChallengeCallback((targetPlayer) -> {
             // Handle challenge - send to target player
-            System.out.println(currentPlayer.getFullName() + " challenged " + targetPlayerUsername);
+            System.out.println(currentPlayer.getFullName() + " challenged " + targetPlayer.getUsername());
         });
-        homeTab.setAcceptChallengeCallback((challengerUsername) -> {
+        homeTab.setAcceptChallengeCallback((challenger) -> {
             // Handle accept challenge - start game with challenger
-            System.out.println(currentPlayer.getFullName() + " accepted challenge from " + challengerUsername);
+            System.out.println(currentPlayer.getFullName() + " accepted challenge from " + challenger.getUsername());
+            challengerPlayer = challenger;
+            if (gameStartCallback != null) {
+                gameStartCallback.onGameStart();
+            }
         });
         
         tabContentPanel.add(homeTab, "HOME");
-        tabContentPanel.add(new ProfileTab(), "PROFILE");
-        tabContentPanel.add(new HistoryTab(), "HISTORY");
-        tabContentPanel.add(new RankTab(), "RANK");
+        tabContentPanel.add(new ProfileTab(currentPlayer), "PROFILE");
+        tabContentPanel.add(new HistoryTab(currentPlayer), "HISTORY");
+        tabContentPanel.add(new RankTab(homeTab.getPlayerList(), currentPlayer), "RANK");
 
         add(headerPanel, BorderLayout.NORTH);
         add(tabContentPanel, BorderLayout.CENTER);
@@ -191,6 +196,22 @@ public class Home extends JPanel {
 
     public Player getCurrentPlayer() {
         return currentPlayer;
+    }
+
+    public Player getChallengerPlayer() {
+        return challengerPlayer;
+    }
+
+    public void setChallengerPlayer(Player challenger) {
+        this.challengerPlayer = challenger;
+    }
+
+    public void showChallengeInvitation(Player challenger) {
+        homeTab.showChallengeInvitation(challenger);
+    }
+
+    public void sendChallengeInvitation(Player targetPlayer) {
+        homeTab.showWaitingForResponse(targetPlayer.getUsername());
     }
 
     // Custom TabButton class with underline for active state

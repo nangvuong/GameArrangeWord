@@ -3,10 +3,15 @@ package main.Home;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import model.Player;
 
 public class HistoryTab extends JPanel {
 
     public HistoryTab() {
+        this(null);
+    }
+
+    public HistoryTab(Player player) {
         setLayout(new BorderLayout());
         setBackground(Color.WHITE);
         setBorder(new EmptyBorder(40, 40, 40, 40));
@@ -20,9 +25,14 @@ public class HistoryTab extends JPanel {
         historyPanel.setOpaque(false);
         historyPanel.setBorder(new EmptyBorder(20, 0, 0, 0));
 
+        // Hiển thị lịch sử (demo data)
+        // TODO: Kết nối với database để hiển thị lịch sử thực tế
         historyPanel.add(createHistoryItem("Ngày 01/11/2025", "950 điểm", "Thắng", new Color(76, 175, 80)));
+        historyPanel.add(Box.createVerticalStrut(10));
         historyPanel.add(createHistoryItem("Ngày 31/10/2025", "1200 điểm", "Thắng", new Color(76, 175, 80)));
+        historyPanel.add(Box.createVerticalStrut(10));
         historyPanel.add(createHistoryItem("Ngày 30/10/2025", "850 điểm", "Thua", new Color(244, 67, 54)));
+        historyPanel.add(Box.createVerticalStrut(10));
         historyPanel.add(createHistoryItem("Ngày 29/10/2025", "1100 điểm", "Thắng", new Color(76, 175, 80)));
 
         JScrollPane scrollPane = new JScrollPane(historyPanel);

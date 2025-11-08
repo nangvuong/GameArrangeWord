@@ -277,7 +277,7 @@ public class Login extends JPanel {
             messageLabel.setText("");
             // Tạo Player object khi đăng nhập thành công
             player = new Player(user, user, pass);
-            player.setRating(0.0); // Mặc định rating = 0.0
+            player.setRating(0); // Mặc định rating = 0
             
             loginCallback.onLoginSuccess(user);
             setVisible(false);

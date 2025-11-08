@@ -39,6 +39,7 @@ public class GamePlay extends JPanel {
     private String correctWord = "EFFECT";
     private boolean[] usedLetters;
     private int[] showResultColors;
+    private String hint = "the result of a particular influence";
 
 
     private JPanel answerPanel;
@@ -71,7 +72,26 @@ public class GamePlay extends JPanel {
         startTimer();
     }
 
+    public GamePlay(Match match) {
+        setPreferredSize(new Dimension(1000, 700));
+        setBackground(new Color(75, 0, 130));
+        setLayout(null);
+
+        this.currentMatch = match;
+        this.playerName = match.getPlayer1().getPlayer().getFullName();
+        this.opponentName = match.getPlayer2().getPlayer().getFullName();
+        this.currentPlayer = match.getPlayer1().getPlayer();
+        this.opponentPlayer = match.getPlayer2().getPlayer();
+        this.correctWord = match.getRounds().get(0).getWord().getWord();
+        this.hint = match.getRounds().get(0).getWord().getHint();
+
+        initGame();
+        initializeComponents();
+        startTimer();
+    }
+
     private void initGame() {
+        
         // Chuẩn bị các ô trống
         answerLetters = new String[correctWord.length()];
         Arrays.fill(answerLetters, "");
@@ -234,7 +254,7 @@ public class GamePlay extends JPanel {
         panel.setBackground(new Color(75, 0, 130));
 
         // Hint text
-        hintLabel = new JLabel("the result of a particular influence");
+        hintLabel = new JLabel(hint);
         hintLabel.setFont(new Font("Segoe UI", Font.PLAIN, 18));
         hintLabel.setForeground(new Color(200, 200, 255));
         hintLabel.setBounds(150, 40, 700, 40);
@@ -503,6 +523,9 @@ public class GamePlay extends JPanel {
             timerLabel.setForeground(new Color(255, 100, 100));
             progressBar.setValue(TIME_PER_ROUND);
             progressBar.setForeground(new Color(255, 165, 0));
+            correctWord = currentMatch.getRounds().get(currentRound - 1).getWord().getWord();
+            hint = currentMatch.getRounds().get(currentRound - 1).getWord().getHint();
+            hintLabel.setText(hint);
             initGame();
             updateAnswerPanel();
             updateLettersPanel();
