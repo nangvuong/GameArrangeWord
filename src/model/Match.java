@@ -10,8 +10,6 @@ public class Match implements Serializable {
     private int id;
     private Playing player1;
     private Playing player2;
-    private int player1_points;
-    private int player2_points;
     private Date date;
     private List<Round> rounds;
 
@@ -21,17 +19,12 @@ public class Match implements Serializable {
         this.player1 = player1;
         this.player2 = player2;
         this.date = date;
-        this.player1_points = 0;
-        this.player2_points = 0;
     }
 
-    public Match(int id, Playing player1, Playing player2, int player1_points, int player2_points, 
-                 Date date, List<Round> rounds) {
+    public Match(int id, Playing player1, Playing player2, Date date, List<Round> rounds) {
         this.id = id;
         this.player1 = player1;
         this.player2 = player2;
-        this.player1_points = player1_points;
-        this.player2_points = player2_points;
         this.date = date;
         this.rounds = rounds;
     }
@@ -60,22 +53,6 @@ public class Match implements Serializable {
         this.player2 = player2;
     }
 
-    public int getPlayer1_points() {
-        return player1_points;
-    }
-
-    public void setPlayer1_points(int player1_points) {
-        this.player1_points = player1_points;
-    }
-
-    public int getPlayer2_points() {
-        return player2_points;
-    }
-
-    public void setPlayer2_points(int player2_points) {
-        this.player2_points = player2_points;
-    }
-
     public Date getDate() {
         return date;
     }
@@ -98,8 +75,6 @@ public class Match implements Serializable {
                 "id=" + id +
                 ", player1=" + player1 +
                 ", player2=" + player2 +
-                ", player1_points=" + player1_points +
-                ", player2_points=" + player2_points +
                 ", date=" + date +
                 ", rounds=" + rounds +
                 '}';

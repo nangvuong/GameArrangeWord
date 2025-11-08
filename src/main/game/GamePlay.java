@@ -18,6 +18,20 @@ public class GamePlay extends JPanel {
     private static final int LETTER_BOX_SIZE = 60;
     private static final int LETTER_BOX_SPACING = 10;
 
+    // ===== CACHED RENDERING OBJECTS (Tránh tạo mới trong paintComponent) =====
+    private static final Font FONT_LARGE = new Font("Segoe UI", Font.BOLD, 28);
+    private static final Font FONT_MEDIUM = new Font("Segoe UI", Font.BOLD, 20);
+    private static final Color COLOR_PURPLE_LIGHT = new Color(100, 0, 150);
+    private static final Color COLOR_CORRECT = new Color(0, 255, 120);
+    private static final Color COLOR_WRONG = Color.RED;
+    private static final Color COLOR_LETTER_ACTIVE = new Color(100, 100, 255);
+    private static final Color COLOR_LETTER_HOVER = new Color(120, 170, 255);
+    private static final Color COLOR_LETTER_USED = new Color(70, 70, 110);
+    private static final Color COLOR_BORDER_LETTER = new Color(200, 200, 255);
+    private static final Color COLOR_BORDER_USED = new Color(100, 100, 150);
+    private static final BasicStroke STROKE_LETTER = new BasicStroke(2);
+    private static final BasicStroke STROKE_DASHED = new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0, new float[]{5}, 0);
+
     private int playerScore = 0;
     private String playerScoreLabel = "0";
     private int opponentScore = 0;
@@ -282,56 +296,81 @@ public class GamePlay extends JPanel {
     }
 
     private void updateAnswerPanel() {
-        answerPanel.removeAll();
-        
-        for (int i = 0; i < correctWord.length(); i++) {
-            final int boxIndex = i;
-            JPanel boxPanel = new JPanel() {
-                @Override
-                protected void paintComponent(Graphics g) {
-                    Graphics2D g2 = (Graphics2D) g;
-                    g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                    
-                    g2.setColor(new Color(100, 0, 150));
-                    g2.setStroke(new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0, new float[]{5}, 0));
-                    g2.drawRoundRect(2, 2, getWidth() - 4, getHeight() - 4, 8, 8);
-                    
-                    String text = boxIndex < answerLetters.length ? answerLetters[boxIndex] : "";
-                    if (text != null && !text.isEmpty()) {
-                        // Chỉ hiển thị màu xanh nếu ký tự đó đúng và đang hiển thị kết quả
-                        if (showResultColors[boxIndex] == 1) {
-                            g2.setColor(new Color(0, 255, 120)); // Xanh lá khi đúng
-                        } else if (showResultColors[boxIndex] == -1) {
-                            g2.setColor(Color.RED); // Bình thường (cả khi sai hoặc chưa hiển thị)
-                        } else {
-                            g2.setColor(Color.WHITE); // Bình thường (cả khi sai hoặc chưa hiển thị)
-                        }
-
-                        g2.setFont(new Font("Segoe UI", Font.BOLD, 28));
-                        FontMetrics fm = g2.getFontMetrics();
-                        int x = (getWidth() - fm.stringWidth(text)) / 2;
-                        int y = ((getHeight() - fm.getHeight()) / 2) + fm.getAscent();
-                        g2.drawString(text, x, y);
-                    }
-                }
-            };
+        // Tối ưu: Rebuild chỉ khi cần thiết (khác độ dài từ)
+        if (answerPanel.getComponentCount() != correctWord.length()) {
+            // Rebuild khi độ dài từ thay đổi
+            answerPanel.removeAll();
             
-            boxPanel.setPreferredSize(new Dimension(BLANK_BOX_SIZE, BLANK_BOX_SIZE));
-            boxPanel.setOpaque(false);
-            boxPanel.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    removeLetter(boxIndex);
-                }
-            });
-            answerPanel.add(boxPanel);
+            for (int i = 0; i < correctWord.length(); i++) {
+                final int boxIndex = i;
+                JPanel boxPanel = new JPanel() {
+                    @Override
+                    protected void paintComponent(Graphics g) {
+                        Graphics2D g2 = (Graphics2D) g;
+                        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                        
+                        g2.setColor(COLOR_PURPLE_LIGHT);
+                        g2.setStroke(STROKE_DASHED);
+                        g2.drawRoundRect(2, 2, getWidth() - 4, getHeight() - 4, 8, 8);
+                        
+                        String text = boxIndex < answerLetters.length ? answerLetters[boxIndex] : "";
+                        if (text != null && !text.isEmpty()) {
+                            if (showResultColors[boxIndex] == 1) {
+                                g2.setColor(COLOR_CORRECT);
+                            } else if (showResultColors[boxIndex] == -1) {
+                                g2.setColor(COLOR_WRONG);
+                            } else {
+                                g2.setColor(Color.WHITE);
+                            }
+
+                            g2.setFont(FONT_LARGE);
+                            FontMetrics fm = g2.getFontMetrics();
+                            int x = (getWidth() - fm.stringWidth(text)) / 2;
+                            int y = ((getHeight() - fm.getHeight()) / 2) + fm.getAscent();
+                            g2.drawString(text, x, y);
+                        }
+                    }
+                };
+                
+                boxPanel.setPreferredSize(new Dimension(BLANK_BOX_SIZE, BLANK_BOX_SIZE));
+                boxPanel.setOpaque(false);
+                boxPanel.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        removeLetter(boxIndex);
+                    }
+                });
+                answerPanel.add(boxPanel);
+            }
+            
+            answerPanel.revalidate();
+        } else {
+            // Tối ưu: Chỉ repaint các component hiện có (cùng độ dài từ)
+            for (Component comp : answerPanel.getComponents()) {
+                comp.repaint();
+            }
         }
         
-        answerPanel.revalidate();
         answerPanel.repaint();
     }
 
     private void updateLettersPanel() {
+        // Tối ưu: Kiểm tra nếu chỉ cần update trạng thái, không cần rebuild
+        if (lettersPanel.getComponentCount() == scrambledLetters.length) {
+            // Chỉ update từng component hiện có thay vì rebuild
+            Component[] components = lettersPanel.getComponents();
+            for (int i = 0; i < components.length && i < scrambledLetters.length; i++) {
+                if (components[i] instanceof JButton) {
+                    JButton btn = (JButton) components[i];
+                    btn.setEnabled(!usedLetters[i]);
+                    btn.setCursor(usedLetters[i] ? new Cursor(Cursor.DEFAULT_CURSOR) : new Cursor(Cursor.HAND_CURSOR));
+                    btn.repaint();
+                }
+            }
+            return;
+        }
+
+        // Rebuild chỉ khi cần thiết (khác số lượng chữ)
         lettersPanel.removeAll();
 
         for (int i = 0; i < scrambledLetters.length; i++) {
@@ -344,36 +383,33 @@ public class GamePlay extends JPanel {
                     Graphics2D g2 = (Graphics2D) g;
                     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                     
-                    // Màu tùy vào trạng thái used/enabled
                     Color fillColor;
                     Color borderColor;
                     
                     if (isUsed) {
-                        // Đã dùng → màu xám nhạt
                         if (getModel().isArmed()) {
                             fillColor = new Color(80, 80, 120);
                         } else if (getModel().isRollover()) {
                             fillColor = new Color(90, 90, 130);
                         } else {
-                            fillColor = new Color(70, 70, 110);
+                            fillColor = COLOR_LETTER_USED;
                         }
-                        borderColor = new Color(100, 100, 150);
+                        borderColor = COLOR_BORDER_USED;
                     } else {
-                        // Chưa dùng → màu xanh sáng
                         if (getModel().isArmed()) {
                             fillColor = new Color(100, 150, 255);
                         } else if (getModel().isRollover()) {
-                            fillColor = new Color(120, 170, 255);
+                            fillColor = COLOR_LETTER_HOVER;
                         } else {
-                            fillColor = new Color(100, 100, 255);
+                            fillColor = COLOR_LETTER_ACTIVE;
                         }
-                        borderColor = new Color(200, 200, 255);
+                        borderColor = COLOR_BORDER_LETTER;
                     }
                     
                     g2.setColor(fillColor);
                     g2.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
                     g2.setColor(borderColor);
-                    g2.setStroke(new BasicStroke(2));
+                    g2.setStroke(STROKE_LETTER);
                     g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 10, 10);
                     
                     super.paintComponent(g);
@@ -381,14 +417,14 @@ public class GamePlay extends JPanel {
             };
             
             letterBtn.setPreferredSize(new Dimension(LETTER_BOX_SIZE, LETTER_BOX_SIZE));
-            letterBtn.setFont(new Font("Segoe UI", Font.BOLD, 20));
+            letterBtn.setFont(FONT_MEDIUM);
             letterBtn.setForeground(Color.WHITE);
             letterBtn.setBorder(BorderFactory.createEmptyBorder());
             letterBtn.setFocusPainted(false);
             letterBtn.setContentAreaFilled(false);
             letterBtn.setOpaque(false);
             letterBtn.setCursor(isUsed ? new Cursor(Cursor.DEFAULT_CURSOR) : new Cursor(Cursor.HAND_CURSOR));
-            letterBtn.setEnabled(!isUsed); // Disable nếu đã dùng
+            letterBtn.setEnabled(!isUsed);
             
             if (!isUsed) {
                 letterBtn.addActionListener(e -> selectLetter(index));
@@ -402,12 +438,11 @@ public class GamePlay extends JPanel {
     }
 
     private void selectLetter(int index) {
-        // Kiểm tra xem game đã kết thúc chưa
         if (gameEnded) {
             return;
         }
         
-        // Tìm vị trí trống đầu tiên trong answerLetters
+        // Tìm vị trí trống đầu tiên
         int emptyPos = -1;
         for (int i = 0; i < answerLetters.length; i++) {
             if (answerLetters[i].isEmpty()) {
@@ -420,21 +455,20 @@ public class GamePlay extends JPanel {
             answerLetters[emptyPos] = scrambledLetters[index];
             usedLetters[index] = true;
             
+            // Tối ưu: Chỉ repaint thay vì rebuild
             updateAnswerPanel();
             updateLettersPanel();
             
-            // Kiểm tra xem hết chữ cái chưa
             checkAllLettersUsed();
         }
     }
 
     private void removeLetter(int index) {
-        // Kiểm tra xem game đã kết thúc chưa
         if (gameEnded) {
             return;
         }
         
-        // index là vị trí trong answerLetters
+        // Tối ưu: Chỉ xử lý nếu có ký tự tại vị trí
         if (index >= 0 && index < answerLetters.length && !answerLetters[index].isEmpty()) {
             String letterToRemove = answerLetters[index];
             
@@ -611,10 +645,10 @@ public class GamePlay extends JPanel {
         
         gameEnded = true;
         
-        // Update match with final scores
+        // Update match with final scores (sử dụng point từ Playing objects)
         if (currentMatch != null) {
-            currentMatch.setPlayer1_points(playerScore);
-            currentMatch.setPlayer2_points(opponentScore);
+            currentMatch.getPlayer1().setPoint(playerScore);
+            currentMatch.getPlayer2().setPoint(opponentScore);
         }
 
         if (onGameEnd != null) {
