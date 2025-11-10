@@ -602,6 +602,7 @@ public class HomeTab extends JPanel {
 
         return button;
     }
+
     public void updatePlayerList(List<Player> newPlayerList) {
         this.playerList = newPlayerList;
         playerListPanel.removeAll();
@@ -626,5 +627,39 @@ public class HomeTab extends JPanel {
         centerContentPanel.add(createCenterPanel(), BorderLayout.CENTER);
         centerContentPanel.revalidate();
         centerContentPanel.repaint();
+    }
+
+    public void showWaitingForGameStart(String opponentName) {
+        SwingUtilities.invokeLater(() -> {
+            JPanel waitingPanel = new JPanel(new BorderLayout());
+            waitingPanel.setBackground(Color.WHITE);
+            waitingPanel.setBorder(new EmptyBorder(50, 30, 50, 30));
+
+            JLabel titleLabel = new JLabel("🎮 Game sắp bắt đầu!", SwingConstants.CENTER);
+            titleLabel.setFont(new Font("SF Pro Display", Font.BOLD, 24));
+            titleLabel.setForeground(new Color(120, 60, 160));
+
+            JLabel messageLabel = new JLabel("<html><center>Đang chuẩn bị game với <b>" + opponentName
+                    + "</b><br>Vui lòng chờ trong giây lát...</center></html>", SwingConstants.CENTER);
+            messageLabel.setFont(new Font("SF Pro Display", Font.PLAIN, 16));
+            messageLabel.setForeground(Color.GRAY);
+
+            JPanel loadingPanel = new JPanel(new FlowLayout());
+            loadingPanel.setOpaque(false);
+
+            JLabel loadingLabel = new JLabel("●●●");
+            loadingLabel.setFont(new Font("SF Pro Display", Font.BOLD, 20));
+            loadingLabel.setForeground(new Color(100, 149, 237));
+            loadingPanel.add(loadingLabel);
+
+            waitingPanel.add(titleLabel, BorderLayout.NORTH);
+            waitingPanel.add(messageLabel, BorderLayout.CENTER);
+            waitingPanel.add(loadingPanel, BorderLayout.SOUTH);
+
+            removeAll();
+            add(waitingPanel, BorderLayout.CENTER);
+            revalidate();
+            repaint();
+        });
     }
 }

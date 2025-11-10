@@ -19,7 +19,6 @@ import model.Round;
 import model.Word;
 import network.GameClient;
 import main.game.GameEnd;
-import network.GameClient;
 
 public class Main {
     private static JFrame window;
@@ -97,7 +96,13 @@ public class Main {
             window.repaint();
         });
         homePanel.setGameStartCallback(() -> {
-            showGameStart(homePanel);
+            // Kiểm tra nếu có matchId từ server → vào game trực tiếp
+            if (homePanel.getGameMatchId() > 0) {
+                showGamePlay(homePanel); // ← Vào game TRỰC TIẾP, bỏ qua màn Start
+            } else {
+                System.out.println("vao day ma");
+                showGameStart(homePanel); // ← Chỉ show màn Start khi practice mode
+            }
         });
         window.setContentPane(homePanel);
         window.revalidate();

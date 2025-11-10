@@ -84,13 +84,14 @@ public class Home extends JPanel implements ServerMessageListener {
             PlayerIO.inviteUserToGame(targetPlayer.getUsername());
         });
         homeTab.setAcceptChallengeCallback((challenger) -> {
-            // Chấp nhận lời mời
             System.out.println(currentPlayer.getFullName() + " accepted challenge from " + challenger.getUsername());
             challengerPlayer = challenger;
             PlayerIO.respondToInvitation(challenger.getUsername(), true);
-            if (gameStartCallback != null) {
-                gameStartCallback.onGameStart();
-            }
+
+            // ← XÓA DÒNG NÀY: gameStartCallback.onGameStart();
+
+            // Hiển thị thông báo chờ đợi
+            // homeTab.showWaitingForGameStart(challenger.getNickname());
         });
 
         tabContentPanel.add(homeTab, "HOME");
@@ -184,20 +185,23 @@ public class Home extends JPanel implements ServerMessageListener {
 
     private void handleInvitationResponse(JSONObject message) {
         boolean accepted = message.optBoolean("accept", false);
+        String opponentNickname = message.optString("opponentNickname", "");
 
         if (accepted) {
-            System.out.println("✅ Invitation accepted! Starting game...");
-            // Opponent đã chấp nhận, bắt đầu game
-            if (gameStartCallback != null) {
-                gameStartCallback.onGameStart();
-            }
+            System.out.println("✅ Invitation accepted by " + opponentNickname + "! Waiting for game data...");
+
+            // ← XÓA DÒNG NÀY: gameStartCallback.onGameStart();
+
+            // Hiển thị thông báo chờ đợi
+            homeTab.showWaitingForGameStart(opponentNickname);
+
+            // Chờ server gửi START_GAME với đầy đủ dữ liệu
         } else {
-            System.out.println("❌ Invitation declined.");
+            System.out.println("❌ Invitation declined by " + opponentNickname);
             JOptionPane.showMessageDialog(this,
-                    "Người chơi đã từ chối lời mời!",
+                    "Người chơi " + opponentNickname + " đã từ chối lời mời!",
                     "Thông báo",
                     JOptionPane.INFORMATION_MESSAGE);
-            // Quay về home screen
             homeTab.showDefaultContent();
         }
     }
