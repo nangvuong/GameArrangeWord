@@ -28,7 +28,7 @@ public class SortingGamePlay extends JPanel {
   private JPanel itemsPanel;
   private JLabel timerLabel;
   private JLabel instructionLabel;
-  private javax.swing.Timer gameTimer; 
+  private javax.swing.Timer gameTimer;
   private boolean gameEnded = false;
 
   private Runnable onGameEnd;
@@ -133,13 +133,13 @@ public class SortingGamePlay extends JPanel {
   }
 
   private JPanel createItemsPanel() {
-    JPanel panel = new JPanel();
-    panel.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 20));
-    panel.setBackground(BG_COLOR);
+    itemsPanel = new JPanel(); // ← Gán itemsPanel trước!
+    itemsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 20));
+    itemsPanel.setBackground(BG_COLOR);
 
-    updateItemsDisplay();
+    updateItemsDisplay(); // ← Bây giờ an toàn rồi
 
-    return panel;
+    return itemsPanel;
   }
 
   private void updateItemsDisplay() {
@@ -259,7 +259,7 @@ public class SortingGamePlay extends JPanel {
     JSONObject data = new JSONObject();
     data.put("matchId", matchId);
     data.put("userId", playerId);
-    data.put("roundNumber", currentRound); 
+    data.put("roundNumber", currentRound);
     data.put("timeCompleted", timeCompleted);
     data.put("status", status);
 
