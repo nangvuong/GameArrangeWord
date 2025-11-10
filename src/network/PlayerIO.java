@@ -36,7 +36,7 @@ public class PlayerIO {
     JSONObject request = new JSONObject();
     request.put("action", "INVITE_USER_TO_GAME_RESPONSE");
     request.put("inviterUsername", inviterUsername);
-    request.put("accept", accept);
+    request.put("accepted", accept);
     getClient().sendMessage(request);
   }
 

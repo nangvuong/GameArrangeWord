@@ -123,7 +123,7 @@ public class Home extends JPanel implements ServerMessageListener {
             case "INVITE_USER_TO_GAME_RESPONSE":
                 handleInvitationResponse(message);
                 break;
-            case "START_GAME": // ← THÊM CASE NÀY
+            case "START_GAME":
                 handleStartGame(message);
                 break;
             case "GET_RANKING_RESPONSE":
@@ -184,7 +184,7 @@ public class Home extends JPanel implements ServerMessageListener {
     }
 
     private void handleInvitationResponse(JSONObject message) {
-        boolean accepted = message.optBoolean("accept", false);
+        boolean accepted = message.optBoolean("accepted", false);
         String opponentNickname = message.optString("opponentNickname", "");
 
         if (accepted) {
