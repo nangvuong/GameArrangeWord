@@ -61,6 +61,17 @@ public class Player implements Serializable {
         this.status = status;
     }
 
+    public Player(models.User user) {
+        this.id = user.getId();
+        this.fullName = user.getNickname();
+        this.username = user.getUsername();
+        this.password = user.getPassword();
+        this.totalWins = user.getTotalWins();
+        this.totalMatches = user.getTotalMatches();
+        this.rating = user.getTotalScore();
+        this.status = user.isPlaying() ? 1 : (user.isOnline() ? 0 : -1);
+    }
+
     public int getId() {
         return id;
     }

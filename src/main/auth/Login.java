@@ -13,7 +13,7 @@ public class Login extends JPanel {
     private Player player;
 
     public interface LoginCallback {
-        void onLoginSuccess(String username);
+        void onLoginSuccess(Player player);
     }
     
     public interface RegisterCallback {
@@ -151,7 +151,12 @@ public class Login extends JPanel {
         loginButton.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
-                handleLogin();
+                try {
+                    handleLogin();
+                } catch (Exception e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
             }
         });
         gbc.gridy = 5;
@@ -267,7 +272,7 @@ public class Login extends JPanel {
         return field;
     }
 
-    private void handleLogin() {
+    private void handleLogin() throws Exception {
         String user = usernameField.getText().trim();
         String pass = new String(passwordField.getPassword()).trim();
 
@@ -276,10 +281,11 @@ public class Login extends JPanel {
         } else {
             messageLabel.setText("");
             // Tạo Player object khi đăng nhập thành công
-            player = new Player(user, user, pass);
+            player = network.PlayerAuth.checkLogin(user, pass);
             player.setRating(0); // Mặc định rating = 0
-            
-            loginCallback.onLoginSuccess(user);
+            if (player != null && loginCallback != null) {
+                loginCallback.onLoginSuccess(player);
+            }
             setVisible(false);
         }
     }
