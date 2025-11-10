@@ -2,6 +2,7 @@ package main;
 
 import javax.swing.*;
 import com.formdev.flatlaf.FlatLightLaf;
+import java.io.IOException;
 
 import main.Home.Home;
 import main.auth.Login;
@@ -14,13 +15,15 @@ import model.Match;
 import model.Round;
 import model.Word;
 import main.game.GameEnd;
+import network.Server;
 
 public class Main {
     private static JFrame window;
     private static Login loginPanelRef;
     private static Player currentPlayer;
+    private static Server server;
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         // Áp dụng giao diện FlatLaf
         try {
             UIManager.setLookAndFeel(new FlatLightLaf());
@@ -34,18 +37,21 @@ public class Main {
         window.setResizable(false);
         window.setSize(1000, 700);
         window.setLocationRelativeTo(null);
+        server = new Server();
 
         loginPanelRef = new Login((username) -> {
             currentPlayer = loginPanelRef.getPlayer();
             showHomeScreen(currentPlayer);
-        });
+        }, server);
+        
+        
 
         loginPanelRef.setRegisterCallback(() -> {
             final Register[] registerPanelRef = new Register[1];
             registerPanelRef[0] = new Register(() -> {
                 currentPlayer = registerPanelRef[0].getNewPlayer();
                 showHomeScreen(currentPlayer);
-            });
+            }, server);
 
             registerPanelRef[0].setBackCallback(() -> {
                 loginPanelRef.resetForm();
@@ -64,7 +70,7 @@ public class Main {
     }
 
     private static void showHomeScreen(Player currentPlayer) {
-        Home homePanel = new Home(currentPlayer);
+        Home homePanel = new Home(currentPlayer, server);
         homePanel.setLogoutCallback(() -> {
             loginPanelRef.resetForm();
             window.setContentPane(loginPanelRef);

@@ -3,9 +3,14 @@ package main.auth;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import model.Player;
+import network.PlayerIO;
+import network.Server;
 
 public class Register extends JPanel {
 
@@ -26,9 +31,12 @@ public class Register extends JPanel {
     private JLabel messageLabel;
     private RegisterCallback registerCallback;
     private BackCallback backCallback;
+    private PlayerIO playerIO;
 
-    public Register(RegisterCallback registerCallback) {
+    public Register(RegisterCallback registerCallback, Server server) {
         this.registerCallback = registerCallback;
+        
+        playerIO = new PlayerIO(server);
         
         setLayout(new BorderLayout());
         setBackground(new Color(255, 255, 255));
@@ -181,7 +189,11 @@ public class Register extends JPanel {
         registerButton.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
-                handleRegister();
+                try {
+                    handleRegister();
+                } catch (IOException ex) {
+                    Logger.getLogger(Register.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
         gbc.gridy = 9;
@@ -297,7 +309,7 @@ public class Register extends JPanel {
         return field;
     }
 
-    private void handleRegister() {
+    private void handleRegister() throws IOException {
         String fullName = fullNameField.getText().trim();
         String username = usernameField.getText().trim();
         String password = new String(passwordField.getPassword()).trim();
@@ -313,10 +325,14 @@ public class Register extends JPanel {
             messageLabel.setText("");
             // Tạo Player object mới với rating = 0.0
             newPlayer = new Player(fullName, username, password);
-            newPlayer.setRating(0); // Rating mặc định cho người chơi mới
             
-            registerCallback.onRegisterSuccess();
-            setVisible(false);
+            if (playerIO.register(newPlayer)){
+                newPlayer.setRating(0); // Rating mặc định cho người chơi mới
+            
+                registerCallback.onRegisterSuccess();
+                setVisible(false);
+            }
+            
         }
     }
 

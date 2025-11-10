@@ -18,6 +18,11 @@ public class Player implements Serializable {
 
     public Player() {}
 
+    public Player(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
     public Player(String fullName, String username, String password) {
         this.fullName = fullName;
         this.username = username;

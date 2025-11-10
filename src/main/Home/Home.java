@@ -3,10 +3,15 @@ package main.Home;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import model.Player;
+import network.PlayerIO;
+import network.Server;
 
 public class Home extends JPanel {
 
@@ -20,6 +25,7 @@ public class Home extends JPanel {
     private GameStartCallback gameStartCallback;
     private Player currentPlayer;
     private Player challengerPlayer;
+    PlayerIO playerIO;
 
     public interface LogoutCallback {
         void onLogout();
@@ -30,8 +36,9 @@ public class Home extends JPanel {
     }
 
 
-    public Home( Player currentPlayer) {
+    public Home(Player currentPlayer, Server server) {
         setLayout(new BorderLayout());
+        playerIO = new PlayerIO(server);
         setBackground(new Color(240, 242, 245));
         this.currentPlayer = currentPlayer;
 
@@ -118,7 +125,16 @@ public class Home extends JPanel {
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
         rightPanel.setOpaque(false);
         JButton logoutBtn = createLogoutButton("🚪 Logout");
-        logoutBtn.addActionListener(e -> { if (logoutCallback != null) logoutCallback.onLogout(); });
+        logoutBtn.addActionListener(e -> { 
+            if (logoutCallback != null) {
+                try {
+                    playerIO.logout();
+                } catch (IOException ex) {
+                    Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                logoutCallback.onLogout(); 
+            }
+        });
         rightPanel.add(logoutBtn);
 
         gbc.gridx = 2;

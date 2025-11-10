@@ -7,6 +7,8 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import model.Player;
+import network.PlayerIO;
+import network.Server;
 
 public class Login extends JPanel {
 
@@ -25,9 +27,11 @@ public class Login extends JPanel {
     private JLabel messageLabel;
     private LoginCallback loginCallback;
     private RegisterCallback registerCallback;
+    private PlayerIO playerIO;
 
-    public Login(LoginCallback loginCallback) {
+    public Login(LoginCallback loginCallback, Server server) {
         this.loginCallback = loginCallback;
+        playerIO = new PlayerIO(server);
         
         setLayout(new BorderLayout());
         setBackground(new Color(255, 255, 255));
@@ -279,14 +283,13 @@ public class Login extends JPanel {
         if (user.isEmpty() || pass.isEmpty()) {
             messageLabel.setText("⚠️ Vui lòng nhập đầy đủ thông tin!");
         } else {
-            messageLabel.setText("");
-            // Tạo Player object khi đăng nhập thành công
-            player = network.PlayerAuth.checkLogin(user, pass);
-            player.setRating(0); // Mặc định rating = 0
-            if (player != null && loginCallback != null) {
+            player = new Player(user, pass);
+            if (playerIO.checkLogin(player)) {
                 loginCallback.onLoginSuccess(player);
+                setVisible(false);
+            } else {
+                messageLabel.setText("Sai tài khoản hoặc mật khẩu");
             }
-            setVisible(false);
         }
     }
 
