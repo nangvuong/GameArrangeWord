@@ -273,7 +273,6 @@ public class Register extends JPanel {
     }
 
     // ===== SỬA HÀM NÀY =====
-    // ===== SỬA HÀM NÀY =====
     private void handleRegister() {
         String fullName = fullNameField.getText().trim();
         String username = usernameField.getText().trim();

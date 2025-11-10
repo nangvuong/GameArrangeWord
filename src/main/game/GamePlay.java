@@ -5,6 +5,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.*;
 
+import org.json.JSONObject;
+
 import java.util.Arrays;
 import java.util.Collections;
 import model.Player;
@@ -30,7 +32,8 @@ public class GamePlay extends JPanel {
     private static final Color COLOR_BORDER_LETTER = new Color(200, 200, 255);
     private static final Color COLOR_BORDER_USED = new Color(100, 100, 150);
     private static final BasicStroke STROKE_LETTER = new BasicStroke(2);
-    private static final BasicStroke STROKE_DASHED = new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 0, new float[]{5}, 0);
+    private static final BasicStroke STROKE_DASHED = new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND,
+            0, new float[] { 5 }, 0);
 
     private int playerScore = 0;
     private String playerScoreLabel = "0";
@@ -41,20 +44,21 @@ public class GamePlay extends JPanel {
     private Timer gameTimer;
     private boolean roundEnded = false; // Track xem round đã kết thúc
     private boolean gameEnded = false; // Track xem game đã kết thúc
-    
+    private int roundStartTime = TIME_PER_ROUND; // Lưu thời gian bắt đầu round
+    private String currentRoundStatus = "UNKNOWN"; // CORRECT, WRONG, TIMEOUT, QUIT
+
     private String playerName = "Player";
     private String opponentName = "AI";
     private Player currentPlayer;
     private Player opponentPlayer;
     private Match currentMatch;
-    
+
     private String[] answerLetters; // Ô trống để điền
     private String[] scrambledLetters; // Ô ký tự
     private String correctWord = "EFFECT";
     private boolean[] usedLetters;
     private int[] showResultColors;
     private String hint = "the result of a particular influence";
-
 
     private JPanel answerPanel;
     private JLabel hintLabel;
@@ -86,15 +90,15 @@ public class GamePlay extends JPanel {
         startTimer();
     }
 
-    public GamePlay(Match match) {
+    public GamePlay(Match match, Player currentPlayer) {
         setPreferredSize(new Dimension(1000, 700));
         setBackground(new Color(75, 0, 130));
         setLayout(null);
 
         this.currentMatch = match;
+        this.currentPlayer = currentPlayer;
         this.playerName = match.getPlayer1().getPlayer().getFullName();
         this.opponentName = match.getPlayer2().getPlayer().getFullName();
-        this.currentPlayer = match.getPlayer1().getPlayer();
         this.opponentPlayer = match.getPlayer2().getPlayer();
         this.correctWord = match.getRounds().get(0).getWord().getWord();
         this.hint = match.getRounds().get(0).getWord().getHint();
@@ -105,7 +109,7 @@ public class GamePlay extends JPanel {
     }
 
     private void initGame() {
-        
+
         // Chuẩn bị các ô trống
         answerLetters = new String[correctWord.length()];
         Arrays.fill(answerLetters, "");
@@ -118,8 +122,9 @@ public class GamePlay extends JPanel {
         java.util.List<String> list = Arrays.asList(scrambledLetters);
         Collections.shuffle(list);
         scrambledLetters = list.toArray(new String[0]);
-        
+
         usedLetters = new boolean[scrambledLetters.length];
+        roundStartTime = TIME_PER_ROUND; // Reset thời gian bắt đầu
     }
 
     private void initializeComponents() {
@@ -154,12 +159,12 @@ public class GamePlay extends JPanel {
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
         leftPanel.setBackground(new Color(75, 0, 130));
         leftPanel.setOpaque(false);
-        
+
         playerNameLabel = new JLabel(playerName);
         playerNameLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         playerNameLabel.setForeground(new Color(200, 200, 255));
         playerNameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
+
         // Panel chứa score
         playerScorePanel = new JPanel() {
             @Override
@@ -167,7 +172,7 @@ public class GamePlay extends JPanel {
                 super.paintComponent(g);
                 Graphics2D g2 = (Graphics2D) g;
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                
+
                 // Vẽ số điểm chính
                 g2.setColor(Color.WHITE);
                 g2.setFont(new Font("Segoe UI", Font.BOLD, 28));
@@ -182,11 +187,11 @@ public class GamePlay extends JPanel {
         playerScorePanel.setOpaque(false);
         playerScorePanel.setPreferredSize(new Dimension(80, 50));
         playerScorePanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
+
         leftPanel.add(playerNameLabel);
         leftPanel.add(Box.createVerticalStrut(5));
         leftPanel.add(playerScorePanel);
-        
+
         gbc.gridx = 0;
         gbc.weightx = 1;
         gbc.anchor = GridBagConstraints.CENTER;
@@ -197,21 +202,21 @@ public class GamePlay extends JPanel {
         centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.Y_AXIS));
         centerPanel.setBackground(new Color(75, 0, 130));
         centerPanel.setOpaque(false);
-        
+
         roundLabel = new JLabel("Round: 1/10");
         roundLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
         roundLabel.setForeground(Color.WHITE);
         roundLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
+
         timerLabel = new JLabel("15s");
         timerLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
         timerLabel.setForeground(new Color(255, 100, 100));
         timerLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
+
         centerPanel.add(roundLabel);
         centerPanel.add(Box.createVerticalStrut(5));
         centerPanel.add(timerLabel);
-        
+
         gbc.gridx = 1;
         gbc.weightx = 0;
         panel.add(centerPanel, gbc);
@@ -221,12 +226,12 @@ public class GamePlay extends JPanel {
         rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
         rightPanel.setBackground(new Color(75, 0, 130));
         rightPanel.setOpaque(false);
-        
+
         opponentNameLabel = new JLabel(opponentName);
         opponentNameLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
         opponentNameLabel.setForeground(new Color(200, 200, 255));
         opponentNameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
+
         // Panel chứa score
         opponentScorePanel = new JPanel() {
             @Override
@@ -234,7 +239,7 @@ public class GamePlay extends JPanel {
                 super.paintComponent(g);
                 Graphics2D g2 = (Graphics2D) g;
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                
+
                 // Vẽ số điểm chính
                 g2.setColor(Color.WHITE);
                 g2.setFont(new Font("Segoe UI", Font.BOLD, 28));
@@ -249,11 +254,11 @@ public class GamePlay extends JPanel {
         opponentScorePanel.setOpaque(false);
         opponentScorePanel.setPreferredSize(new Dimension(80, 50));
         opponentScorePanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        
+
         rightPanel.add(opponentNameLabel);
         rightPanel.add(Box.createVerticalStrut(5));
         rightPanel.add(opponentScorePanel);
-        
+
         gbc.gridx = 2;
         gbc.weightx = 1;
         gbc.anchor = GridBagConstraints.CENTER;
@@ -300,7 +305,7 @@ public class GamePlay extends JPanel {
         if (answerPanel.getComponentCount() != correctWord.length()) {
             // Rebuild khi độ dài từ thay đổi
             answerPanel.removeAll();
-            
+
             for (int i = 0; i < correctWord.length(); i++) {
                 final int boxIndex = i;
                 JPanel boxPanel = new JPanel() {
@@ -308,11 +313,11 @@ public class GamePlay extends JPanel {
                     protected void paintComponent(Graphics g) {
                         Graphics2D g2 = (Graphics2D) g;
                         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                        
+
                         g2.setColor(COLOR_PURPLE_LIGHT);
                         g2.setStroke(STROKE_DASHED);
                         g2.drawRoundRect(2, 2, getWidth() - 4, getHeight() - 4, 8, 8);
-                        
+
                         String text = boxIndex < answerLetters.length ? answerLetters[boxIndex] : "";
                         if (text != null && !text.isEmpty()) {
                             if (showResultColors[boxIndex] == 1) {
@@ -331,7 +336,7 @@ public class GamePlay extends JPanel {
                         }
                     }
                 };
-                
+
                 boxPanel.setPreferredSize(new Dimension(BLANK_BOX_SIZE, BLANK_BOX_SIZE));
                 boxPanel.setOpaque(false);
                 boxPanel.addMouseListener(new MouseAdapter() {
@@ -342,7 +347,7 @@ public class GamePlay extends JPanel {
                 });
                 answerPanel.add(boxPanel);
             }
-            
+
             answerPanel.revalidate();
         } else {
             // Tối ưu: Chỉ repaint các component hiện có (cùng độ dài từ)
@@ -350,7 +355,7 @@ public class GamePlay extends JPanel {
                 comp.repaint();
             }
         }
-        
+
         answerPanel.repaint();
     }
 
@@ -376,16 +381,16 @@ public class GamePlay extends JPanel {
         for (int i = 0; i < scrambledLetters.length; i++) {
             final int index = i;
             final boolean isUsed = usedLetters[i];
-            
+
             JButton letterBtn = new JButton(scrambledLetters[i]) {
                 @Override
                 protected void paintComponent(Graphics g) {
                     Graphics2D g2 = (Graphics2D) g;
                     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                    
+
                     Color fillColor;
                     Color borderColor;
-                    
+
                     if (isUsed) {
                         if (getModel().isArmed()) {
                             fillColor = new Color(80, 80, 120);
@@ -405,17 +410,17 @@ public class GamePlay extends JPanel {
                         }
                         borderColor = COLOR_BORDER_LETTER;
                     }
-                    
+
                     g2.setColor(fillColor);
                     g2.fillRoundRect(0, 0, getWidth(), getHeight(), 10, 10);
                     g2.setColor(borderColor);
                     g2.setStroke(STROKE_LETTER);
                     g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 10, 10);
-                    
+
                     super.paintComponent(g);
                 }
             };
-            
+
             letterBtn.setPreferredSize(new Dimension(LETTER_BOX_SIZE, LETTER_BOX_SIZE));
             letterBtn.setFont(FONT_MEDIUM);
             letterBtn.setForeground(Color.WHITE);
@@ -425,11 +430,11 @@ public class GamePlay extends JPanel {
             letterBtn.setOpaque(false);
             letterBtn.setCursor(isUsed ? new Cursor(Cursor.DEFAULT_CURSOR) : new Cursor(Cursor.HAND_CURSOR));
             letterBtn.setEnabled(!isUsed);
-            
+
             if (!isUsed) {
                 letterBtn.addActionListener(e -> selectLetter(index));
             }
-            
+
             lettersPanel.add(letterBtn);
         }
 
@@ -441,7 +446,7 @@ public class GamePlay extends JPanel {
         if (gameEnded) {
             return;
         }
-        
+
         // Tìm vị trí trống đầu tiên
         int emptyPos = -1;
         for (int i = 0; i < answerLetters.length; i++) {
@@ -450,15 +455,15 @@ public class GamePlay extends JPanel {
                 break;
             }
         }
-        
+
         if (emptyPos != -1) {
             answerLetters[emptyPos] = scrambledLetters[index];
             usedLetters[index] = true;
-            
+
             // Tối ưu: Chỉ repaint thay vì rebuild
             updateAnswerPanel();
             updateLettersPanel();
-            
+
             checkAllLettersUsed();
         }
     }
@@ -467,11 +472,11 @@ public class GamePlay extends JPanel {
         if (gameEnded) {
             return;
         }
-        
+
         // Tối ưu: Chỉ xử lý nếu có ký tự tại vị trí
         if (index >= 0 && index < answerLetters.length && !answerLetters[index].isEmpty()) {
             String letterToRemove = answerLetters[index];
-            
+
             // Tìm chỉ số ký tự trong mảng scrambledLetters để unmark
             for (int i = scrambledLetters.length - 1; i >= 0; i--) {
                 if (usedLetters[i] && scrambledLetters[i].equals(letterToRemove)) {
@@ -479,7 +484,7 @@ public class GamePlay extends JPanel {
                     break;
                 }
             }
-            
+
             // Xoá chữ tại vị trí
             answerLetters[index] = "";
             updateAnswerPanel();
@@ -488,19 +493,50 @@ public class GamePlay extends JPanel {
     }
 
     private void calcPointRound() {
-        int correctCount = 0;
-        for (int i = 0; i < correctWord.length(); i++) {
-            if (answerLetters[i].equals(String.valueOf(correctWord.charAt(i)))) {
-                correctCount++;
-            }
+        StringBuilder userAnswer = new StringBuilder();
+        // Tạo câu trả lời từ answerLetters
+        for (int i = 0; i < answerLetters.length; i++) {
+            userAnswer.append(answerLetters[i]);
         }
 
-        playerScoreLabel += " + " + String.valueOf(correctCount * 10);
+        // Tính thời gian đã dùng (tính bằng giây)
+        int timeCompleted = roundStartTime - timeRemaining;
+        // Xác định status: CORRECT hoặc WRONG
+        boolean isCorrect = userAnswer.toString().equals(correctWord);
+        currentRoundStatus = isCorrect ? "CORRECT" : "WRONG";
+        // Tính điểm tạm thời cho UI (server sẽ tính lại chính xác)
+        if (isCorrect) {
+            int pointsEarned = 1; // Tạm tính 100 điểm cho đúng
+            playerScoreLabel += " + " + pointsEarned;
+            playerScore += pointsEarned;
+        } else {
+            playerScoreLabel += " + 0";
+        }
         playerScorePanel.repaint();
-        
-        // Cộng điểm cho player dựa trên số ký tự đúng
-        int pointsEarned = correctCount * 10;
-        playerScore += pointsEarned;
+        // Gửi answer lên server (nếu không phải chơi với AI)
+        if (currentMatch != null && currentPlayer != null && opponentPlayer != null) {
+            if (!opponentPlayer.getUsername().equals("ai")) {
+                int matchId = currentMatch.getId();
+                int userId = currentPlayer.getId();
+
+                // Gửi với roundNumber thay vì roundId
+                JSONObject request = new JSONObject();
+                request.put("action", "SUBMIT_USER_ANSWER");
+
+                JSONObject data = new JSONObject();
+                data.put("matchId", matchId);
+                data.put("userId", userId);
+                data.put("roundNumber", currentRound); // Gửi roundNumber
+                data.put("timeCompleted", timeCompleted);
+                data.put("status", currentRoundStatus); // CORRECT hoặc WRONG
+
+                request.put("data", data);
+                network.GameClient.getInstance().sendMessage(request);
+
+                System.out.println("📤 Sent answer to server: status=" + currentRoundStatus +
+                        ", time=" + timeCompleted + "s, round=" + currentRound);
+            }
+        }
     }
 
     private void checkAllLettersUsed() {
@@ -512,7 +548,7 @@ public class GamePlay extends JPanel {
                 break;
             }
         }
-        
+
         if (allUsed) {
             roundEnded = true;
             if (gameTimer != null) {
@@ -596,7 +632,7 @@ public class GamePlay extends JPanel {
             if (roundEnded) {
                 return;
             }
-            
+
             if (timeRemaining > 0) {
                 timeRemaining--;
                 progressBar.setValue(timeRemaining);
@@ -614,9 +650,30 @@ public class GamePlay extends JPanel {
                 if (gameTimer != null) {
                     gameTimer.stop();
                 }
-                calcPointRound();
+                currentRoundStatus = "TIMEOUT";
+                int timeCompleted = roundStartTime; // Hết thời gian
 
-                // === Hiển thị đáp án đúng trước khi qua round mới ===
+                // Gửi TIMEOUT lên server
+                if (currentMatch != null && currentPlayer != null && opponentPlayer != null) {
+                    if (!opponentPlayer.getUsername().equals("ai")) {
+                        JSONObject request = new JSONObject();
+                        request.put("action", "SUBMIT_USER_ANSWER");
+
+                        JSONObject data = new JSONObject();
+                        data.put("matchId", currentMatch.getId());
+                        data.put("userId", currentPlayer.getId());
+                        data.put("roundNumber", currentRound);
+                        data.put("timeCompleted", timeCompleted);
+                        data.put("status", "TIMEOUT");
+
+                        request.put("data", data);
+                        network.GameClient.getInstance().sendMessage(request);
+
+                        System.out.println("📤 Sent TIMEOUT to server for round " + currentRound);
+                    }
+                }
+
+                // Hiển thị đáp án đúng
                 for (int i = 0; i < correctWord.length(); i++) {
                     if (answerLetters[i].equals(String.valueOf(correctWord.charAt(i)))) {
                         showResultColors[i] = 1;
@@ -625,9 +682,8 @@ public class GamePlay extends JPanel {
                     }
                     answerLetters[i] = String.valueOf(correctWord.charAt(i));
                 }
-                updateAnswerPanel(); // Cập nhật giao diện để hiển thị đáp án đúng
+                updateAnswerPanel();
 
-                // Chờ 0.5 giây rồi sang round mới
                 Timer delayTimer = new Timer(1000, ev -> {
                     resetRound();
                 });
@@ -642,9 +698,9 @@ public class GamePlay extends JPanel {
         if (gameTimer != null) {
             gameTimer.stop();
         }
-        
+
         gameEnded = true;
-        
+
         // Update match with final scores (sử dụng point từ Playing objects)
         if (currentMatch != null) {
             currentMatch.getPlayer1().setPoint(playerScore);
@@ -655,23 +711,23 @@ public class GamePlay extends JPanel {
             onGameEnd.run();
         }
     }
-    
+
     public int getPlayerScore() {
         return playerScore;
     }
-    
+
     public int getOpponentScore() {
         return opponentScore;
     }
-    
+
     public Match getMatch() {
         return currentMatch;
     }
-    
+
     public Player getCurrentPlayer() {
         return currentPlayer;
     }
-    
+
     public Player getOpponentPlayer() {
         return opponentPlayer;
     }

@@ -44,7 +44,7 @@ public class HomeTab extends JPanel {
     public HomeTab(Player currentPlayer) {
         this.currentPlayerUsername = currentPlayer.getFullName();
         this.playerList = new ArrayList<>();
-        
+
         // Mock data
         initializeMockPlayers();
 
@@ -53,13 +53,13 @@ public class HomeTab extends JPanel {
 
         // Left panel - Player list
         JPanel leftPanel = createLeftPanel();
-        
+
         // Center panel - Content
         centerContentPanel = createCenterPanel();
-        
+
         add(leftPanel, BorderLayout.WEST);
         add(centerContentPanel, BorderLayout.CENTER);
-        
+
         // Show random challenge invitation after a delay
         scheduleRandomChallenge();
     }
@@ -74,7 +74,7 @@ public class HomeTab extends JPanel {
                         onlinePlayers.add(player);
                     }
                 }
-                
+
                 if (!onlinePlayers.isEmpty()) {
                     Random rand = new Random();
                     Player challenger = onlinePlayers.get(rand.nextInt(onlinePlayers.size()));
@@ -188,7 +188,8 @@ public class HomeTab extends JPanel {
                 break;
         }
 
-        JLabel scoreLabel = new JLabel("⭐ " + String.format("%d", player.getRating()) + " điểm | " + statusIcon + " " + player.getStatusString());
+        JLabel scoreLabel = new JLabel("⭐ " + String.format("%d", player.getRating()) + " điểm | " + statusIcon + " "
+                + player.getStatusString());
         scoreLabel.setFont(new Font("SF Pro Display", Font.PLAIN, 11));
         scoreLabel.setForeground(new Color(120, 120, 120));
 
@@ -216,11 +217,11 @@ public class HomeTab extends JPanel {
         button.setBorderPainted(false);
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
         button.setPreferredSize(new Dimension(40, 40));
-        
+
         // Chỉ cho phép thách đấu những player có status = 0 (Online)
         boolean canChallenge = player.getStatus() == 0;
         button.setEnabled(canChallenge);
-        
+
         if (!canChallenge) {
             button.setBackground(new Color(180, 180, 180)); // Màu xám cho disabled
             button.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -276,10 +277,9 @@ public class HomeTab extends JPanel {
         topPanel.add(Box.createVerticalStrut(8));
         topPanel.add(subtitle);
 
-
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         bottomPanel.setOpaque(false);
-        
+
         // Play button
         JButton playBtn = createPlayButton("▶ Bắt đầu chơi");
         playBtn.addMouseListener(new MouseAdapter() {
@@ -297,7 +297,7 @@ public class HomeTab extends JPanel {
 
         return centerPanel;
     }
-    
+
     private JButton createPlayButton(String text) {
         JButton btn = new JButton(text);
         btn.setFont(new Font("SF Pro Display", Font.BOLD, 18));
@@ -309,7 +309,7 @@ public class HomeTab extends JPanel {
         btn.setContentAreaFilled(true);
         btn.setBorderPainted(false);
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        
+
         btn.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -321,7 +321,7 @@ public class HomeTab extends JPanel {
                 btn.setBackground(LIGHT_PURPLE);
             }
         });
-        
+
         return btn;
     }
 
@@ -602,30 +602,29 @@ public class HomeTab extends JPanel {
 
         return button;
     }
-
-    private void showDefaultContent() {
-        centerContentPanel.removeAll();
-        centerContentPanel.add(createCenterPanel(), BorderLayout.CENTER);
-        centerContentPanel.revalidate();
-        centerContentPanel.repaint();
-    }
-
     public void updatePlayerList(List<Player> newPlayerList) {
         this.playerList = newPlayerList;
         playerListPanel.removeAll();
-        
+
         for (Player player : playerList) {
             if (!player.getUsername().equals(currentPlayerUsername)) {
                 playerListPanel.add(createPlayerCard(player));
                 playerListPanel.add(Box.createVerticalStrut(10));
             }
         }
-        
+
         playerListPanel.revalidate();
         playerListPanel.repaint();
     }
 
     public List<Player> getPlayerList() {
         return playerList;
+    }
+
+    public void showDefaultContent() {
+        centerContentPanel.removeAll();
+        centerContentPanel.add(createCenterPanel(), BorderLayout.CENTER);
+        centerContentPanel.revalidate();
+        centerContentPanel.repaint();
     }
 }
