@@ -128,11 +128,14 @@ public class Home extends JPanel implements ServerMessageListener {
             case "GET_RANKING_RESPONSE":
                 handleRankingResponse(message);
                 break;
-            case "GAME_RESULT": // ← THÊM CASE NÀY
+            case "GAME_RESULT":
                 handleGameResult(message);
                 break;
-            case "GAME_FINAL_RESULT": // ← THÊM CASE NÀY
+            case "GAME_FINAL_RESULT":
                 handleGameFinalResult(message);
+                break;
+            case "CONTINUE_NEXT_GAME":
+                handleContinueNextGame(message);
                 break;
         }
     }
@@ -420,6 +423,21 @@ public class Home extends JPanel implements ServerMessageListener {
             this.gameSelf = selfJson;
             this.gameOpponent = opponentJson;
 
+            gameStartCallback.onGameStart();
+        }
+    }
+
+    private void handleContinueNextGame(JSONObject message) {
+        JSONObject questionJson = message.optJSONObject("question");
+
+        System.out.println("🎮 CONTINUE_NEXT_GAME received!");
+        System.out.println("📝 Next round instruction: " + questionJson.optString("instruction", ""));
+
+        // Update question data cho round mới
+        this.gameQuestion = questionJson;
+
+        // Trigger game to load next round
+        if (gameStartCallback != null) {
             gameStartCallback.onGameStart();
         }
     }

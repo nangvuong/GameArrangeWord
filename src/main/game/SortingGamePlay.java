@@ -1,8 +1,6 @@
 package main.game;
 
 import java.awt.*;
-import java.awt.dnd.*;
-import java.awt.datatransfer.*;
 import javax.swing.*;
 import java.util.*;
 import java.util.List;
@@ -14,6 +12,7 @@ public class SortingGamePlay extends JPanel {
   private int matchId;
   private int timeLimit;
   private int timeRemaining;
+  private int currentRound = 1;
   private String typeQues; // NUMBERS or LETTERS
   private String sortOrder; // ASCENDING or DESCENDING
   private String instruction;
@@ -29,7 +28,7 @@ public class SortingGamePlay extends JPanel {
   private JPanel itemsPanel;
   private JLabel timerLabel;
   private JLabel instructionLabel;
-  private Timer gameTimer;
+  private javax.swing.Timer gameTimer; 
   private boolean gameEnded = false;
 
   private Runnable onGameEnd;
@@ -38,8 +37,9 @@ public class SortingGamePlay extends JPanel {
   private static final Color ITEM_COLOR = new Color(100, 100, 255);
   private static final Color ITEM_HOVER = new Color(120, 170, 255);
 
-  public SortingGamePlay(int matchId, JSONObject questionData, JSONObject self, JSONObject opponent) {
+  public SortingGamePlay(int matchId, JSONObject questionData, JSONObject self, JSONObject opponent, int roundNumber) {
     this.matchId = matchId;
+    this.currentRound = roundNumber;
 
     // Parse question data
     this.typeQues = questionData.optString("typeQues", "NUMBERS");
@@ -215,7 +215,7 @@ public class SortingGamePlay extends JPanel {
   }
 
   private void startTimer() {
-    gameTimer = new Timer(1000, e -> {
+    gameTimer = new javax.swing.Timer(1000, e -> {
       if (gameEnded)
         return;
 
@@ -259,7 +259,7 @@ public class SortingGamePlay extends JPanel {
     JSONObject data = new JSONObject();
     data.put("matchId", matchId);
     data.put("userId", playerId);
-    data.put("roundNumber", 1); // First round
+    data.put("roundNumber", currentRound); 
     data.put("timeCompleted", timeCompleted);
     data.put("status", status);
 
@@ -286,7 +286,7 @@ public class SortingGamePlay extends JPanel {
     repaint();
 
     // Wait 2 seconds then end game
-    Timer endTimer = new Timer(2000, e -> {
+    javax.swing.Timer endTimer = new javax.swing.Timer(2000, e -> {
       if (onGameEnd != null) {
         onGameEnd.run();
       }

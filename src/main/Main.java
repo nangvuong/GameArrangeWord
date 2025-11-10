@@ -26,6 +26,7 @@ public class Main {
     private static Login loginPanelRef;
     private static Player currentPlayer;
     private static GameClient gameClient;
+    private static int currentRoundNumber = 1;
 
     public static void main(String[] args) {
         // Áp dụng giao diện FlatLaf
@@ -83,6 +84,7 @@ public class Main {
     }
 
     private static void showHomeScreen(Player currentPlayer) {
+        currentRoundNumber = 1;
         Home homePanel = new Home(currentPlayer);
         homePanel.setLogoutCallback(() -> {
             // Disconnect khi logout
@@ -122,9 +124,11 @@ public class Main {
 
             System.out.println("🎮 Starting REAL multiplayer game!");
 
-            SortingGamePlay gamePlayPanel = new SortingGamePlay(matchId, questionData, self, opponent);
+            SortingGamePlay gamePlayPanel = new SortingGamePlay(matchId, questionData, self, opponent,
+                    currentRoundNumber);
             gamePlayPanel.setOnGameEndCallback(() -> {
-                // TODO: Show game end screen
+                currentRoundNumber++; // Tăng round sau mỗi lần chơi xong
+                // Chờ server gửi GAME_RESULT hoặc CONTINUE_NEXT_GAME
                 showHome(homePanel);
             });
 
