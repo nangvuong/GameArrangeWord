@@ -31,12 +31,9 @@ public class Login extends JPanel {
         
         setLayout(new BorderLayout());
         setBackground(new Color(255, 255, 255));
-        setPreferredSize(new Dimension(900, 600)); // Kích thước cho 2 cột
+        setPreferredSize(new Dimension(900, 600));
 
-        // Panel bên trái - Logo + Slogan
         JPanel leftPanel = createLeftPanel();
-        
-        // Panel bên phải - Form đăng nhập
         JPanel rightPanel = createRightPanel();
 
         add(leftPanel, BorderLayout.WEST);
@@ -45,7 +42,7 @@ public class Login extends JPanel {
 
     private JPanel createLeftPanel() {
         JPanel leftPanel = new JPanel(new GridBagLayout());
-        leftPanel.setBackground(new Color(120, 60, 160)); // Tím nhạt
+        leftPanel.setBackground(new Color(120, 60, 160));
         leftPanel.setPreferredSize(new Dimension(450, 600));
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -53,7 +50,6 @@ public class Login extends JPanel {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
 
-        // Spacer trên
         JPanel spacerTop = new JPanel();
         spacerTop.setOpaque(false);
         gbc.gridy = 0;
@@ -61,7 +57,6 @@ public class Login extends JPanel {
         leftPanel.add(spacerTop, gbc);
         gbc.weighty = 0;
 
-        // Tên game
         JLabel gameName = new JLabel("Word Arrange");
         gameName.setFont(new Font("SF Pro Display", Font.BOLD, 48));
         gameName.setForeground(Color.WHITE);
@@ -69,7 +64,6 @@ public class Login extends JPanel {
         gbc.insets = new Insets(0, 0, 20, 0);
         leftPanel.add(gameName, gbc);
 
-        // Slogan
         JLabel slogan = new JLabel("<html><center>Sắp xếp từ,<br>thử thách trí tuệ</center></html>");
         slogan.setFont(new Font("SF Pro Display", Font.PLAIN, 16));
         slogan.setForeground(new Color(200, 220, 255));
@@ -78,7 +72,6 @@ public class Login extends JPanel {
         gbc.insets = new Insets(0, 20, 0, 20);
         leftPanel.add(slogan, gbc);
 
-        // Spacer dưới
         JPanel spacerBottom = new JPanel();
         spacerBottom.setOpaque(false);
         gbc.gridy = 4;
@@ -90,7 +83,7 @@ public class Login extends JPanel {
 
     private JPanel createRightPanel() {
         JPanel rightPanel = new JPanel(new GridBagLayout());
-        rightPanel.setBackground(Color.WHITE); // Neutral - Trắng
+        rightPanel.setBackground(Color.WHITE);
         rightPanel.setPreferredSize(new Dimension(450, 600));
         rightPanel.setBorder(new EmptyBorder(40, 40, 40, 40));
 
@@ -99,7 +92,6 @@ public class Login extends JPanel {
         gbc.weightx = 1.0;
         gbc.gridx = 0;
 
-        // Spacer trên
         JPanel spacerTop = new JPanel();
         spacerTop.setOpaque(false);
         gbc.gridy = 0;
@@ -107,7 +99,6 @@ public class Login extends JPanel {
         rightPanel.add(spacerTop, gbc);
         gbc.weighty = 0;
 
-        // Username label
         JLabel userLabel = new JLabel("👤 Tên đăng nhập");
         userLabel.setFont(new Font("SF Pro Display", Font.PLAIN, 13));
         userLabel.setForeground(new Color(70, 70, 70));
@@ -115,13 +106,11 @@ public class Login extends JPanel {
         gbc.insets = new Insets(0, 0, 6, 0);
         rightPanel.add(userLabel, gbc);
 
-        // Username field
         usernameField = createStyledTextField();
         gbc.gridy = 2;
         gbc.insets = new Insets(0, 0, 16, 0);
         rightPanel.add(usernameField, gbc);
 
-        // Password label
         JLabel passLabel = new JLabel("🔒 Mật khẩu");
         passLabel.setFont(new Font("SF Pro Display", Font.PLAIN, 13));
         passLabel.setForeground(new Color(70, 70, 70));
@@ -129,18 +118,16 @@ public class Login extends JPanel {
         gbc.insets = new Insets(0, 0, 6, 0);
         rightPanel.add(passLabel, gbc);
 
-        // Password field
         passwordField = createStyledPasswordField();
         gbc.gridy = 4;
         gbc.insets = new Insets(0, 0, 20, 0);
         rightPanel.add(passwordField, gbc);
 
-        // Nút Đăng nhập
-        JButton loginButton = createStyledButton("Đăng Nhập", new Color(120, 60, 160)); // Tím nhạt
+        JButton loginButton = createStyledButton("Đăng Nhập", new Color(120, 60, 160));
         loginButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                loginButton.setBackground(new Color(100, 40, 140)); // Tím đậm hơn
+                loginButton.setBackground(new Color(100, 40, 140));
             }
 
             @Override
@@ -151,35 +138,26 @@ public class Login extends JPanel {
         loginButton.addActionListener(new AbstractAction() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
-                try {
-                    handleLogin();
-                } catch (Exception e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
-                }
+                handleLogin();
             }
         });
         gbc.gridy = 5;
         gbc.insets = new Insets(0, 0, 12, 0);
         rightPanel.add(loginButton, gbc);
 
-        // Nút Tạo tài khoản (Outline style)
         JButton registerButton = new JButton("Tạo tài khoản") {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g;
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 
-                // Nền trắng
                 g2.setColor(Color.WHITE);
                 g2.fillRect(0, 0, getWidth(), getHeight());
                 
-                // Viền tím
                 g2.setColor(new Color(120, 60, 160));
                 g2.setStroke(new BasicStroke(2));
                 g2.drawRect(0, 0, getWidth() - 1, getHeight() - 1);
                 
-                // Vẽ text
                 super.paintComponent(g);
             }
         };
@@ -217,7 +195,6 @@ public class Login extends JPanel {
         gbc.insets = new Insets(0, 0, 0, 0);
         rightPanel.add(registerButton, gbc);
 
-        // Message Label
         messageLabel = new JLabel("", SwingConstants.CENTER);
         messageLabel.setFont(new Font("SF Pro Display", Font.PLAIN, 12));
         messageLabel.setForeground(new Color(244, 67, 54));
@@ -225,7 +202,6 @@ public class Login extends JPanel {
         gbc.insets = new Insets(15, 0, 0, 0);
         rightPanel.add(messageLabel, gbc);
 
-        // Spacer dưới
         JPanel spacerBottom = new JPanel();
         spacerBottom.setOpaque(false);
         gbc.gridy = 8;
@@ -272,21 +248,60 @@ public class Login extends JPanel {
         return field;
     }
 
-    private void handleLogin() throws Exception {
+    // ===== SỬA HÀM NÀY ===== 
+    private void handleLogin() {
         String user = usernameField.getText().trim();
         String pass = new String(passwordField.getPassword()).trim();
 
         if (user.isEmpty() || pass.isEmpty()) {
             messageLabel.setText("⚠️ Vui lòng nhập đầy đủ thông tin!");
-        } else {
-            messageLabel.setText("");
-            // Tạo Player object khi đăng nhập thành công
-            player = network.PlayerAuth.checkLogin(user, pass);
-            player.setRating(0); // Mặc định rating = 0
-            if (player != null && loginCallback != null) {
-                loginCallback.onLoginSuccess(player);
+            return;
+        }
+        
+        messageLabel.setText("🔄 Đang đăng nhập...");
+        messageLabel.setForeground(new Color(33, 150, 243));
+        
+        // Disable button để tránh spam
+        Component[] components = getParent().getComponents();
+        for (Component comp : components) {
+            if (comp instanceof JButton) {
+                comp.setEnabled(false);
             }
-            setVisible(false);
+        }
+        
+        // Chạy login trong background thread
+        new Thread(() -> {
+            try {
+                player = network.PlayerAuth.checkLogin(user, pass);
+                
+                // Chuyển về UI thread để update UI
+                SwingUtilities.invokeLater(() -> {
+                    if (player != null && loginCallback != null) {
+                        messageLabel.setText("✅ Đăng nhập thành công!");
+                        messageLabel.setForeground(new Color(76, 175, 80));
+                        loginCallback.onLoginSuccess(player);
+                    } else {
+                        messageLabel.setText("❌ Tên đăng nhập hoặc mật khẩu không đúng!");
+                        messageLabel.setForeground(new Color(244, 67, 54));
+                        enableButtons();
+                    }
+                });
+            } catch (Exception e) {
+                SwingUtilities.invokeLater(() -> {
+                    messageLabel.setText("❌ " + e.getMessage());
+                    messageLabel.setForeground(new Color(244, 67, 54));
+                    enableButtons();
+                });
+            }
+        }).start();
+    }
+    
+    private void enableButtons() {
+        Component[] components = getParent().getComponents();
+        for (Component comp : components) {
+            if (comp instanceof JButton) {
+                comp.setEnabled(true);
+            }
         }
     }
 
@@ -298,6 +313,7 @@ public class Login extends JPanel {
         usernameField.setText("");
         passwordField.setText("");
         messageLabel.setText("");
+        messageLabel.setForeground(new Color(244, 67, 54));
         setVisible(true);
     }
 
