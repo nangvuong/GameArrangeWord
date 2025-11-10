@@ -1,6 +1,9 @@
 package main;
 
 import javax.swing.*;
+
+import org.json.JSONObject;
+
 import com.formdev.flatlaf.FlatLightLaf;
 
 import main.Home.Home;
@@ -8,6 +11,7 @@ import main.auth.Login;
 import main.auth.Register;
 import main.game.GamePlay;
 import main.game.GameStart;
+import main.game.SortingGamePlay;
 import model.Player;
 import model.Playing;
 import model.Match;
@@ -108,53 +112,34 @@ public class Main {
     }
 
     private static void showGamePlay(Home homePanel) {
-        // Create Match with current player and opponent
-        Player currentPlayer = homePanel.getCurrentPlayer();
-        Player opponent;
+        // Check if game data from server exists
+        if (homePanel.getGameMatchId() > 0 && homePanel.getGameQuestion() != null) {
+            // Real multiplayer game with data from server
+            int matchId = homePanel.getGameMatchId();
+            JSONObject questionData = homePanel.getGameQuestion();
+            JSONObject self = homePanel.getGameSelf();
+            JSONObject opponent = homePanel.getGameOpponent();
 
-        // Check if there's a challenger (from accepted challenge)
-        if (homePanel.getChallengerPlayer() != null) {
-            opponent = homePanel.getChallengerPlayer();
+            System.out.println("🎮 Starting REAL multiplayer game!");
+
+            SortingGamePlay gamePlayPanel = new SortingGamePlay(matchId, questionData, self, opponent);
+            gamePlayPanel.setOnGameEndCallback(() -> {
+                // TODO: Show game end screen
+                showHome(homePanel);
+            });
+
+            window.setContentPane(gamePlayPanel);
+            window.revalidate();
+            window.repaint();
         } else {
-            // Create AI opponent if no challenger
-            opponent = new Player("AI", "ai", "password");
-            opponent.setStatus(0); // Online
+            // Practice mode with AI (no server)
+            System.out.println("🤖 Starting practice mode with AI");
+            JOptionPane.showMessageDialog(window,
+                    "Practice mode - Playing with AI\n(No server connection)",
+                    "Info",
+                    JOptionPane.INFORMATION_MESSAGE);
+            showHome(homePanel);
         }
-
-        Playing player1Playing = new Playing(0, "ONGOING", currentPlayer);
-        Playing player2Playing = new Playing(0, "ONGOING", opponent);
-        Match match = new Match(player1Playing, player2Playing, new java.sql.Date(System.currentTimeMillis()));
-
-        // Create 10 rounds with words
-        java.util.List<Round> rounds = new java.util.ArrayList<>();
-        String[][] wordData = {
-                { "EFFECT", "result of influence" },
-                { "PUZZLE", "mind-bending game" },
-                { "DEVELOP", "to grow or improve" },
-                { "PERFECT", "flawless, ideal" },
-                { "TROUBLE", "difficulty, problem" },
-                { "STRANGE", "unusual, odd" },
-                { "CORRECT", "accurate, right" },
-                { "MACHINE", "mechanical device" },
-                { "QUALITY", "degree of excellence" },
-                { "HARVEST", "gather crops" }
-        };
-
-        for (int i = 0; i < 10; i++) {
-            Word word = new Word(wordData[i][0], wordData[i][1]);
-            Round round = new Round(0, i + 1, word, 0, 0);
-            rounds.add(round);
-        }
-        match.setRounds(rounds);
-
-        // Create GamePlay with Match
-        GamePlay gamePlayPanel = new GamePlay(match);
-        gamePlayPanel.setOnGameEndCallback(() -> {
-            showGameEnd(gamePlayPanel, homePanel.getCurrentPlayer().getUsername(), homePanel);
-        });
-        window.setContentPane(gamePlayPanel);
-        window.revalidate();
-        window.repaint();
     }
 
     private static void showGameEnd(GamePlay gamePlayPanel, String username, Home homePanel) {

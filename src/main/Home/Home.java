@@ -30,6 +30,26 @@ public class Home extends JPanel implements ServerMessageListener {
     private Player currentPlayer;
     private Player challengerPlayer;
     private GameClient client;
+    private int gameMatchId = 0;
+    private JSONObject gameQuestion = null;
+    private JSONObject gameSelf = null;
+    private JSONObject gameOpponent = null;
+
+    public int getGameMatchId() {
+        return gameMatchId;
+    }
+
+    public JSONObject getGameQuestion() {
+        return gameQuestion;
+    }
+
+    public JSONObject getGameSelf() {
+        return gameSelf;
+    }
+
+    public JSONObject getGameOpponent() {
+        return gameOpponent;
+    }
 
     public interface LogoutCallback {
         void onLogout();
@@ -101,6 +121,9 @@ public class Home extends JPanel implements ServerMessageListener {
                 break;
             case "INVITE_USER_TO_GAME_RESPONSE":
                 handleInvitationResponse(message);
+                break;
+            case "START_GAME": // ← THÊM CASE NÀY
+                handleStartGame(message);
                 break;
             case "GET_RANKING_RESPONSE":
                 handleRankingResponse(message);
@@ -379,6 +402,26 @@ public class Home extends JPanel implements ServerMessageListener {
 
     public void sendChallengeInvitation(Player targetPlayer) {
         homeTab.showWaitingForResponse(targetPlayer.getUsername());
+    }
+
+    public void handleStartGame(JSONObject message) {
+        int matchId = message.optInt("matchId", 0);
+        JSONObject questionJson = message.optJSONObject("question");
+        JSONObject selfJson = message.optJSONObject("self");
+        JSONObject opponentJson = message.optJSONObject("opponent");
+        System.out.println("🎮 START_GAME received!");
+        System.out.println("📝 MatchID: " + matchId);
+        System.out.println("📝 Instruction: " + questionJson.optString("instruction", ""));
+        // Bắt đầu game với data từ server
+        if (gameStartCallback != null) {
+            // Lưu game data vào Home để Main.java lấy
+            this.gameMatchId = matchId;
+            this.gameQuestion = questionJson;
+            this.gameSelf = selfJson;
+            this.gameOpponent = opponentJson;
+
+            gameStartCallback.onGameStart();
+        }
     }
 
     private static class TabButton extends JButton {
