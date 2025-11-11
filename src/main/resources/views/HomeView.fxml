@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.media.MediaView?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml"
+    fx:controller="com.ltm.game_client_v3.views.HomeController"
+    stylesheets="@homeview.css"
+    prefWidth="1280" prefHeight="720">
+
+    <!-- 🌌 Background -->
+    <ImageView fitWidth="1280" fitHeight="720" preserveRatio="false">
+        <image>
+            <Image url="@../images/home-bg.jpg" />
+        </image>
+    </ImageView>
+
+    <!-- 🔹 Lớp phủ làm tối background (giống WelcomeView) -->
+    <Pane style="-fx-background-color: rgba(0,0,0,0.45);" />
+
+    <!-- 🔹 Main content -->
+    <BorderPane styleClass="home-container">
+        <!-- Top bar (giống WelcomeView) -->
+        <top>
+            <BorderPane styleClass="top-bar">
+                <!-- 🔸 Left: sound button -->
+                <left>
+                    <Button fx:id="soundButton" styleClass="icon-button" />
+                </left>
+
+                <!-- 🔸 Center: welcome text -->
+                <center>
+                    <Label fx:id="welcomeLabel" text="Welcome, Player!"
+                        styleClass="welcome-label" />
+                </center>
+
+                <!-- 🔸 Right: logout button -->
+                <right>
+                    <Button fx:id="logoutButton" text="⏻ Logout"
+                        onAction="#onLogout" styleClass="logout-button" />
+                </right>
+            </BorderPane>
+        </top>
+
+        <center>
+            <VBox spacing="20" alignment="TOP_CENTER" style="-fx-padding: 20;">
+                <!-- Main content area -->
+                <HBox spacing="20" alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
+
+                    <!-- Left: Message area and buttons -->
+                    <VBox spacing="20" prefWidth="600" alignment="TOP_CENTER">
+
+                        <!-- Message area -->
+                        <VBox spacing="10" VBox.vgrow="ALWAYS">
+                            <Label text="Game Messages"
+                                style="-fx-text-fill: white; -fx-font-size: 16px;" />
+                            <TextArea fx:id="messageArea" styleClass="message-area"
+                                prefWidth="580" prefHeight="300"
+                                editable="false" wrapText="true" />
+                        </VBox>
+
+                        <HBox spacing="20" alignment="CENTER">
+                            <Button fx:id="scoreboardButton" text="Scoreboard"
+                                onAction="#onScoreboard"
+                                styleClass="primary-button" />
+                            <Button fx:id="historyButton" text="History"
+                                styleClass="primary-button" />
+                        </HBox>
+                    </VBox>
+
+                    <!-- Right: Online players list -->
+                    <VBox spacing="10" prefWidth="300" styleClass="players-panel">
+                        <Label text="Online Players" styleClass="players-title" />
+                        <ListView fx:id="onlinePlayersList" styleClass="player-list"
+                            prefWidth="280" prefHeight="400" />
+                    </VBox>
+                </HBox>
+            </VBox>
+        </center>
+    </BorderPane>
+</StackPane>
