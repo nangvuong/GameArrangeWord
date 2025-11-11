@@ -5,87 +5,130 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.media.MediaView?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.Rectangle?>
 
 <StackPane xmlns:fx="http://javafx.com/fxml"
     fx:controller="com.ltm.game_client_v3.views.MatchResultController"
     stylesheets="@matchresultview.css"
-    prefWidth="1280" prefHeight="720">
+    prefWidth="1280" prefHeight="720"
+    styleClass="match-result-root">
 
-    <!-- 🌌 Background (giống HomeView) -->
+    <!-- 🌌 Animated Background -->
     <ImageView fitWidth="1280" fitHeight="720" preserveRatio="false">
         <image>
             <Image url="@../images/home-bg.jpg" />
         </image>
     </ImageView>
 
-    <!-- 🔹 Lớp phủ làm tối background -->
-    <Pane style="-fx-background-color: rgba(0,0,0,0.45);" />
+    <!-- 🔹 Dynamic Overlay -->
+    <Pane styleClass="result-overlay"/>
 
-    <!-- 🔹 Main content -->
-    <BorderPane styleClass="result-container">
-        <!-- Top bar (giống HomeView) -->
+    <!-- 🔹 Main Layout -->
+    <BorderPane>
+        <!-- ========== HEADER ========== -->
         <top>
-            <BorderPane styleClass="top-bar">
-                <!-- 🔸 Left: sound button -->
-                <left>
-                    <Button fx:id="soundButton" styleClass="icon-button" />
-                </left>
+            <HBox styleClass="result-header" alignment="CENTER_LEFT" spacing="30">
+                <padding>
+                    <Insets top="20" right="40" bottom="20" left="40"/>
+                </padding>
 
-                <!-- 🔸 Center: title -->
-                <center>
-                    <Label text="MATCH RESULTS" styleClass="title-label" />
-                </center>
+                <!-- Sound Control -->
+                <Button fx:id="soundButton" styleClass="ctrl-icon-btn">
+                    <graphic>
+                        <ImageView fx:id="soundIcon" fitWidth="28" fitHeight="28" preserveRatio="true"/>
+                    </graphic>
+                </Button>
 
-                <!-- 🔸 Right: home button -->
-                <right>
-                    <Button fx:id="homeButton" text="🏠 Home"
-                        onAction="#onBackToHome" styleClass="home-button" />
-                </right>
-            </BorderPane>
+                <!-- Title Section -->
+                <HBox alignment="CENTER" spacing="15" HBox.hgrow="ALWAYS">
+                    <StackPane>
+                        <Circle radius="25" styleClass="title-icon-circle"/>
+                        <Label text="🎯" style="-fx-font-size: 28px;"/>
+                    </StackPane>
+                    <Label text="MATCH RESULTS" styleClass="result-header-title"/>
+                </HBox>
+
+                <!-- Home Button -->
+                <Button fx:id="homeButton" text="🏠 HOME" onAction="#onBackToHome" styleClass="home-nav-btn"/>
+            </HBox>
         </top>
 
+        <!-- ========== CENTER CONTENT ========== -->
         <center>
-            <VBox spacing="30" alignment="CENTER">
-                <!-- 🔹 Main result box -->
-                <VBox styleClass="result-box" spacing="20">
-                    <!-- Result header -->
-                    <VBox alignment="CENTER" spacing="10">
-                        <Label fx:id="resultEmoji" text="🏆" styleClass="result-emoji" />
-                        <Label fx:id="resultTitle" text="VICTORY!" styleClass="result-title victory" />
+            <VBox spacing="40" alignment="CENTER">
+                <padding>
+                    <Insets top="30" bottom="30"/>
+                </padding>
+
+                <!-- ========== RESULT CARD ========== -->
+                <VBox styleClass="result-main-card" spacing="30" alignment="CENTER">
+                    <padding>
+                        <Insets top="40" right="50" bottom="40" left="50"/>
+                    </padding>
+
+                    <!-- Result Badge -->
+                    <VBox alignment="CENTER" spacing="15" styleClass="result-badge-container">
+                        <StackPane>
+                            <Circle radius="60" styleClass="result-badge-glow"/>
+                            <Label fx:id="resultEmoji" text="🏆" styleClass="result-emoji-large"/>
+                        </StackPane>
+                        <Label fx:id="resultTitle" text="VICTORY!" styleClass="result-title-main victory"/>
                     </VBox>
 
-                    <!-- Score summary -->
-                    <HBox spacing="40" alignment="CENTER" styleClass="score-summary">
-                        <!-- Player stats -->
-                        <VBox spacing="15" alignment="CENTER" styleClass="player-stats-box">
-                            <Label fx:id="playerName" text="YOU" styleClass="player-name" />
-                            <Label fx:id="playerWins" text="3 Wins" styleClass="stat-value" />
-                            <Label fx:id="playerTotalScore" text="Total: 2450"
-                                styleClass="stat-score" />
+                    <!-- Score Display -->
+                    <HBox spacing="50" alignment="CENTER" styleClass="score-display-section">
+                        <!-- Player 1 (YOU) -->
+                        <VBox styleClass="player-card" spacing="15" alignment="CENTER">
+                            <StackPane styleClass="player-avatar-container">
+                                <Circle radius="45" styleClass="avatar-border-you"/>
+                                <Circle radius="40" styleClass="avatar-circle"/>
+                                <Label text="👤" style="-fx-font-size: 36px;"/>
+                            </StackPane>
+                            <Label fx:id="playerName" text="YOU" styleClass="player-label"/>
+                            <VBox spacing="8" alignment="CENTER" styleClass="stats-container">
+                                <HBox spacing="10" alignment="CENTER">
+                                    <Label text="🏆" style="-fx-font-size: 20px;"/>
+                                    <Label fx:id="playerWins" text="3 Wins" styleClass="wins-text"/>
+                                </HBox>
+                                <Label fx:id="playerTotalScore" text="Total: 2450" styleClass="score-text"/>
+                            </VBox>
                         </VBox>
 
-                        <!-- VS separator -->
-                        <VBox alignment="CENTER" spacing="5">
-                            <Label text="VS" styleClass="vs-label" />
-                            <Separator orientation="VERTICAL" prefHeight="60" />
-                            <Label fx:id="totalWinsLabel" text="2 - 1" styleClass="total-wins" />
+                        <!-- VS Divider -->
+                        <VBox alignment="CENTER" spacing="15" styleClass="vs-divider-section">
+                            <Label text="VS" styleClass="vs-label-large"/>
+                            <Rectangle width="2" height="80" styleClass="vs-line"/>
+                            <VBox styleClass="final-score-badge" alignment="CENTER" spacing="5">
+                                <Label text="FINAL SCORE" styleClass="final-score-label"/>
+                                <Label fx:id="totalWinsLabel" text="3 - 1" styleClass="final-score-value"/>
+                            </VBox>
                         </VBox>
 
-                        <!-- Opponent stats -->
-                        <VBox spacing="15" alignment="CENTER" styleClass="player-stats-box">
-                            <Label fx:id="opponentName" text="OPPONENT" styleClass="player-name" />
-                            <Label fx:id="opponentWins" text="1 Win" styleClass="stat-value" />
-                            <Label fx:id="opponentTotalScore" text="Total: 1800"
-                                styleClass="stat-score" />
+                        <!-- Player 2 (OPPONENT) -->
+                        <VBox styleClass="player-card" spacing="15" alignment="CENTER">
+                            <StackPane styleClass="player-avatar-container">
+                                <Circle radius="45" styleClass="avatar-border-opponent"/>
+                                <Circle radius="40" styleClass="avatar-circle"/>
+                                <Label text="🤖" style="-fx-font-size: 36px;"/>
+                            </StackPane>
+                            <Label fx:id="opponentName" text="OPPONENT" styleClass="player-label"/>
+                            <VBox spacing="8" alignment="CENTER" styleClass="stats-container">
+                                <HBox spacing="10" alignment="CENTER">
+                                    <Label text="🏆" style="-fx-font-size: 20px;"/>
+                                    <Label fx:id="opponentWins" text="1 Win" styleClass="wins-text"/>
+                                </HBox>
+                                <Label fx:id="opponentTotalScore" text="Total: 1800" styleClass="score-text"/>
+                            </VBox>
                         </VBox>
                     </HBox>
-
-
                 </VBox>
 
-
+                <!-- ========== ACTION BUTTONS ========== -->
+                <HBox spacing="25" alignment="CENTER" styleClass="action-buttons-row">
+                    <Button text="🎮 PLAY AGAIN" onAction="#onPlayAgain" styleClass="result-action-btn, play-again-btn"/>
+                    <Button text="📤 SHARE" onAction="#onShareResult" styleClass="result-action-btn, share-btn"/>
+                </HBox>
             </VBox>
         </center>
     </BorderPane>

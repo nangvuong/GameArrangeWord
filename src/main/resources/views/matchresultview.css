@@ -1,216 +1,247 @@
-.root {
-    -fx-font-family: "Freckle Face", "Segoe UI", sans-serif;
+/* ========== MATCH RESULT - GAMING STYLE ========== */
+
+.match-result-root {
+    -fx-font-family: "Segoe UI", "Roboto", "Arial", sans-serif;
 }
 
-/* 🔹 Background */
-.result-container {
-    -fx-background-color: rgba(0, 0, 0, 0);
+/* ========== BACKGROUND ========== */
+.result-overlay {
+    -fx-background-color: 
+        radial-gradient(circle at 30% 40%, rgba(138, 43, 226, 0.2), transparent 60%),
+        radial-gradient(circle at 70% 70%, rgba(255, 20, 147, 0.2), transparent 60%),
+        linear-gradient(135deg, rgba(10, 15, 35, 0.92) 0%, rgba(20, 25, 50, 0.95) 100%);
 }
 
-/* 🔹 Top bar */
-.top-bar {
-    -fx-background-color: rgba(0, 0, 0, 0.0);
+/* ========== HEADER ========== */
+.result-header {
+    -fx-background-color: linear-gradient(to right, rgba(25, 35, 65, 0.9), rgba(35, 45, 80, 0.9));
+    -fx-border-color: linear-gradient(to right, #8A2BE2, #FF1493);
+    -fx-border-width: 0 0 3 0;
+    -fx-effect: dropshadow(gaussian, rgba(138, 43, 226, 0.5), 20, 0, 0, 8);
+}
+
+.ctrl-icon-btn {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-background-radius: 50%;
+    -fx-padding: 12;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(138, 43, 226, 0.4), 10, 0, 0, 0);
+}
+.ctrl-icon-btn:hover {
+    -fx-background-color: rgba(138, 43, 226, 0.3);
+    -fx-scale-x: 1.15;
+    -fx-scale-y: 1.15;
+}
+
+.title-icon-circle {
+    -fx-fill: radial-gradient(center 50% 50%, radius 100%, #FFD700, #FFA500);
+    -fx-effect: dropshadow(gaussian, rgba(255, 215, 0, 0.7), 15, 0.6, 0, 0);
+}
+
+.result-header-title {
+    -fx-text-fill: linear-gradient(to right, #FF1493, #8A2BE2);
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(255, 20, 147, 0.6), 10, 0, 0, 0);
+}
+
+.home-nav-btn {
+    -fx-background-color: linear-gradient(to right, #1E90FF, #00BFFF);
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 10 25;
+    -fx-background-radius: 25px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(30, 144, 255, 0.6), 12, 0, 0, 4);
+}
+.home-nav-btn:hover {
+    -fx-background-color: linear-gradient(to right, #00BFFF, #1E90FF);
+    -fx-scale-x: 1.08;
+    -fx-scale-y: 1.08;
+}
+
+/* ========== RESULT MAIN CARD ========== */
+.result-main-card {
+    -fx-background-color: rgba(20, 30, 55, 0.85);
+    -fx-background-radius: 25px;
+    -fx-border-color: linear-gradient(to right, #8A2BE2, #FF1493, #FFD700);
+    -fx-border-width: 3;
+    -fx-border-radius: 25px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.8), 35, 0, 0, 15);
+}
+
+/* ========== RESULT BADGE ========== */
+.result-badge-container {
     -fx-padding: 10;
 }
 
-.title-label {
-    -fx-text-fill: white;
-    -fx-font-size: 24px;
+.result-badge-glow {
+    -fx-fill: radial-gradient(center 50% 50%, radius 100%, rgba(255, 215, 0, 0.4), transparent);
+    -fx-effect: dropshadow(gaussian, rgba(255, 215, 0, 0.8), 30, 0.8, 0, 0);
+}
+
+.result-emoji-large {
+    -fx-font-size: 64px;
+    -fx-effect: dropshadow(gaussian, rgba(255, 255, 255, 0.5), 15, 0, 0, 0);
+}
+
+.result-title-main {
+    -fx-font-size: 36px;
     -fx-font-weight: bold;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 8, 0.5, 0, 2);
+    -fx-padding: 10 30;
+    -fx-background-radius: 15px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 10, 0, 0, 3);
 }
 
-.home-button {
-    -fx-background-color: transparent;
+.result-title-main.victory {
     -fx-text-fill: white;
-    -fx-font-size: 16px;
-    -fx-cursor: hand;
-    -fx-border-color: rgba(255,255,255,0.3);
-    -fx-border-radius: 5;
-    -fx-padding: 8 15;
-}
-
-.home-button:hover {
-    -fx-background-color: rgba(255,255,255,0.1);
-}
-
-/* 🔹 Main result box */
-.result-box {
-    -fx-background-color: rgba(255, 255, 255, 0.95);
-    -fx-background-radius: 20;
-    -fx-border-radius: 20;
-    -fx-border-color: rgba(0, 198, 255, 0.5);
-    -fx-border-width: 3;
-    -fx-padding: 30;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 20, 0.5, 0, 5);
-}
-
-/* 🔹 Result header */
-.result-emoji {
-    -fx-font-size: 48px;
-    -fx-padding: 0 0 10 0;
-}
-
-.result-title {
-    -fx-font-size: 32px;
-    -fx-font-weight: bold;
-    -fx-padding: 5 20;
-    -fx-background-radius: 10;
-}
-
-.result-title.victory {
-    -fx-text-fill: #27ae60;
-    -fx-background-color: rgba(39, 174, 96, 0.1);
-    -fx-border-color: #27ae60;
-    -fx-border-radius: 10;
+    -fx-background-color: linear-gradient(to right, #2ECC71, #27AE60);
+    -fx-border-color: #1E8449;
     -fx-border-width: 2;
+    -fx-border-radius: 15px;
 }
 
-.result-title.defeat {
-    -fx-text-fill: #e74c3c;
-    -fx-background-color: rgba(231, 76, 60, 0.1);
-    -fx-border-color: #e74c3c;
-    -fx-border-radius: 10;
+.result-title-main.defeat {
+    -fx-text-fill: white;
+    -fx-background-color: linear-gradient(to right, #E74C3C, #C0392B);
+    -fx-border-color: #922B21;
     -fx-border-width: 2;
+    -fx-border-radius: 15px;
 }
 
-.result-title.draw {
-    -fx-text-fill: #f39c12;
-    -fx-background-color: rgba(243, 156, 18, 0.1);
-    -fx-border-color: #f39c12;
-    -fx-border-radius: 10;
+.result-title-main.draw {
+    -fx-text-fill: white;
+    -fx-background-color: linear-gradient(to right, #F39C12, #E67E22);
+    -fx-border-color: #A04000;
     -fx-border-width: 2;
+    -fx-border-radius: 15px;
 }
 
-/* 🔹 Score summary */
-.score-summary {
+/* ========== SCORE DISPLAY ========== */
+.score-display-section {
     -fx-padding: 20 0;
 }
 
-.player-stats-box {
-    -fx-padding: 20;
-    -fx-background-color: rgba(248, 249, 250, 1);
-    -fx-background-radius: 15;
-    -fx-border-radius: 15;
-    -fx-border-color: rgba(0, 0, 0, 0.1);
-    -fx-pref-width: 180;
+.player-card {
+    -fx-background-color: rgba(30, 45, 75, 0.7);
+    -fx-background-radius: 20px;
+    -fx-padding: 25;
+    -fx-border-color: rgba(100, 150, 255, 0.3);
+    -fx-border-width: 2;
+    -fx-border-radius: 20px;
+    -fx-min-width: 220;
 }
 
-.player-name {
+.player-avatar-container {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 15, 0, 0, 5);
+}
+
+.avatar-border-you {
+    -fx-fill: transparent;
+    -fx-stroke: linear-gradient(to bottom, #2ECC71, #27AE60);
+    -fx-stroke-width: 4;
+}
+
+.avatar-border-opponent {
+    -fx-fill: transparent;
+    -fx-stroke: linear-gradient(to bottom, #E74C3C, #C0392B);
+    -fx-stroke-width: 4;
+}
+
+.avatar-circle {
+    -fx-fill: linear-gradient(to bottom, rgba(52, 152, 219, 0.3), rgba(41, 128, 185, 0.5));
+}
+
+.player-label {
+    -fx-text-fill: white;
     -fx-font-size: 18px;
     -fx-font-weight: bold;
-    -fx-text-fill: #2c3e50;
 }
 
-.stat-value {
-    -fx-font-size: 16px;
-    -fx-text-fill: #34495e;
-    -fx-font-weight: bold;
+.stats-container {
+    -fx-background-color: rgba(0, 0, 0, 0.3);
+    -fx-background-radius: 12px;
+    -fx-padding: 12;
 }
 
-.stat-score {
-    -fx-font-size: 14px;
-    -fx-text-fill: #7f8c8d;
-}
-
-.vs-label {
-    -fx-font-size: 20px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #95a5a6;
-}
-
-.total-wins {
-    -fx-font-size: 18px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #2c3e50;
-    -fx-padding: 5 15;
-    -fx-background-color: rgba(52, 152, 219, 0.1);
-    -fx-background-radius: 8;
-}
-
-/* 🔹 Match details */
-.match-details {
-    -fx-padding: 20 0 0 0;
-}
-
-.details-title {
-    -fx-font-size: 18px;
-    -fx-font-weight: bold;
-    -fx-text-fill: #2c3e50;
-}
-
-.rounds-list {
-    -fx-background-color: rgba(248, 249, 250, 1);
-    -fx-border-color: rgba(0, 0, 0, 0.1);
-    -fx-border-radius: 10;
-    -fx-background-radius: 10;
-}
-
-.rounds-list .list-cell {
-    -fx-background-color: transparent;
-    -fx-text-fill: #2c3e50;
-    -fx-font-size: 14px;
-    -fx-padding: 8 12;
-    -fx-border-color: transparent;
-}
-
-.rounds-list .list-cell:filled:hover {
-    -fx-background-color: rgba(52, 152, 219, 0.1);
-}
-
-.rounds-list .list-cell:filled:selected {
-    -fx-background-color: rgba(52, 152, 219, 0.2);
-}
-
-/* 🔹 Action buttons */
-.action-button {
-    -fx-pref-width: 160;
-    -fx-pref-height: 50;
+.wins-text {
+    -fx-text-fill: #FFD700;
     -fx-font-size: 16px;
     -fx-font-weight: bold;
-    -fx-background-radius: 12;
-    -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 8, 0.5, 0, 2);
 }
 
-.action-button.primary {
-    -fx-background-color: linear-gradient(to right, #27ae60, #2ecc71);
+.score-text {
+    -fx-text-fill: #B0C8E0;
+    -fx-font-size: 14px;
+}
+
+/* ========== VS DIVIDER ========== */
+.vs-divider-section {
+    -fx-padding: 10;
+}
+
+.vs-label-large {
+    -fx-text-fill: #95A5A6;
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+}
+
+.vs-line {
+    -fx-fill: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+}
+
+.final-score-badge {
+    -fx-background-color: rgba(138, 43, 226, 0.2);
+    -fx-border-color: #8A2BE2;
+    -fx-border-width: 2;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    -fx-padding: 10 20;
+}
+
+.final-score-label {
+    -fx-text-fill: #B19CD9;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+}
+
+.final-score-value {
+    -fx-text-fill: #FF1493;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(255, 20, 147, 0.5), 8, 0, 0, 0);
+}
+
+/* ========== ACTION BUTTONS ========== */
+.action-buttons-row {
+    -fx-padding: 10 0;
+}
+
+.result-action-btn {
+    -fx-pref-width: 200;
+    -fx-pref-height: 55;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
     -fx-text-fill: white;
-}
-
-.action-button.primary:hover {
-    -fx-background-color: linear-gradient(to right, #229954, #27ae60);
-    -fx-scale-x: 1.05;
-    -fx-scale-y: 1.05;
-}
-
-.action-button.secondary {
-    -fx-background-color: linear-gradient(to right, #3498db, #2980b9);
-    -fx-text-fill: white;
-}
-
-.action-button.secondary:hover {
-    -fx-background-color: linear-gradient(to right, #2980b9, #2471a3);
-    -fx-scale-x: 1.05;
-    -fx-scale-y: 1.05;
-}
-
-/* 🔹 Icon button (giống HomeView) */
-.icon-button {
-    -fx-background-color: transparent;
-    -fx-padding: 6;
+    -fx-background-radius: 15px;
     -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 15, 0, 0, 5);
+}
+.result-action-btn:hover {
+    -fx-scale-x: 1.08;
+    -fx-scale-y: 1.08;
 }
 
-.icon-button:hover {
-    -fx-opacity: 0.8;
+.play-again-btn {
+    -fx-background-color: linear-gradient(to right, #9B59B6, #8E44AD);
 }
 
+.share-btn {
+    -fx-background-color: linear-gradient(to right, #3498DB, #2980B9);
+}
+
+/* ========== ROOT FONT ========== */
 .root {
-    /* ✅ Sử dụng system fonts */
-    -fx-font-family: "Segoe UI", "Arial", "Helvetica", sans-serif;
-    /* Hoặc các font phổ biến khác: */
-    /* -fx-font-family: "Times New Roman", serif; */
-    /* -fx-font-family: "Courier New", monospace; */
-    /* -fx-font-family: "Verdana", sans-serif; */
+    -fx-font-family: "Segoe UI", "Arial", sans-serif;
 }

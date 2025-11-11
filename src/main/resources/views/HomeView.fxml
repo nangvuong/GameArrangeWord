@@ -5,8 +5,7 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.media.MediaView?>
+<?import javafx.scene.shape.Circle?>
 
 <StackPane xmlns:fx="http://javafx.com/fxml"
     fx:controller="com.ltm.game_client_v3.views.HomeController"
@@ -20,12 +19,12 @@
         </image>
     </ImageView>
 
-    <!-- 🔹 Lớp phủ làm tối background (giống WelcomeView) -->
+    <!-- 🔹 Lớp phủ làm tối background -->
     <Pane style="-fx-background-color: rgba(0,0,0,0.45);" />
 
     <!-- 🔹 Main content -->
     <BorderPane styleClass="home-container">
-        <!-- Top bar (giống WelcomeView) -->
+        <!-- Top bar -->
         <top>
             <BorderPane styleClass="top-bar">
                 <!-- 🔸 Left: sound button -->
@@ -41,7 +40,7 @@
 
                 <!-- 🔸 Right: logout button -->
                 <right>
-                    <Button fx:id="logoutButton" text="⏻ Logout"
+                    <Button fx:id="logoutButton" text="Đăng xuất"
                         onAction="#onLogout" styleClass="logout-button" />
                 </right>
             </BorderPane>
@@ -51,36 +50,111 @@
             <VBox spacing="20" alignment="TOP_CENTER" style="-fx-padding: 20;">
                 <!-- Main content area -->
                 <HBox spacing="20" alignment="TOP_CENTER" VBox.vgrow="ALWAYS">
+                    <!-- Right: Online players list -->
+                    <VBox spacing="10" prefWidth="300" styleClass="players-panel">
+                        <Label text="👥 Online Players" styleClass="players-title" />
+                        <ListView fx:id="onlinePlayersList" styleClass="player-list"
+                            prefWidth="280" prefHeight="400" />
+                    </VBox>
 
-                    <!-- Left: Message area and buttons -->
+                    <!-- Left: How to Play Guide -->
                     <VBox spacing="20" prefWidth="600" alignment="TOP_CENTER">
 
-                        <!-- Message area -->
-                        <VBox spacing="10" VBox.vgrow="ALWAYS">
-                            <Label text="Game Messages"
-                                style="-fx-text-fill: white; -fx-font-size: 16px;" />
-                            <TextArea fx:id="messageArea" styleClass="message-area"
-                                prefWidth="580" prefHeight="300"
-                                editable="false" wrapText="true" />
+                        <!-- 📖 How to Play Section -->
+                        <VBox spacing="15" styleClass="how-to-play-panel" VBox.vgrow="ALWAYS">
+                            <!-- Header -->
+                            <HBox alignment="CENTER_LEFT" spacing="12" styleClass="guide-header">
+                                <Circle radius="20" styleClass="icon-circle-guide"/>
+                                <Label text="🎮" style="-fx-font-size: 24px;"/>
+                                <Label text="HOW TO PLAY" styleClass="guide-title"/>
+                            </HBox>
+
+                            <!-- Game Rules ScrollPane -->
+                            <ScrollPane styleClass="guide-scroll" fitToWidth="true" VBox.vgrow="ALWAYS">
+                                <VBox spacing="20" styleClass="guide-content">
+                                    <padding>
+                                        <Insets top="15" right="15" bottom="15" left="15"/>
+                                    </padding>
+
+                                    <!-- Step 1 -->
+                                    <HBox spacing="15" alignment="TOP_LEFT" styleClass="guide-step">
+                                        <StackPane styleClass="step-number-circle">
+                                            <Label text="1" styleClass="step-number"/>
+                                        </StackPane>
+                                        <VBox spacing="5">
+                                            <Label text="INVITE OR GET INVITED" styleClass="step-title"/>
+                                            <Label text="Right-click on an online player and select 'Invite to Game', or wait for someone to invite you." 
+                                                   wrapText="true" styleClass="step-description"/>
+                                        </VBox>
+                                    </HBox>
+
+                                    <Separator styleClass="guide-separator"/>
+
+                                    <!-- Step 2 -->
+                                    <HBox spacing="15" alignment="TOP_LEFT" styleClass="guide-step">
+                                        <StackPane styleClass="step-number-circle">
+                                            <Label text="2" styleClass="step-number"/>
+                                        </StackPane>
+                                        <VBox spacing="5">
+                                            <Label text="SORT THE ITEMS" styleClass="step-title"/>
+                                            <Label text="When the game starts, you'll see random numbers or letters. Click on them to move them to the bottom row and sort them in the correct order (ascending or descending)." 
+                                                   wrapText="true" styleClass="step-description"/>
+                                        </VBox>
+                                    </HBox>
+
+                                    <Separator styleClass="guide-separator"/>
+
+                                    <!-- Step 3 -->
+                                    <HBox spacing="15" alignment="TOP_LEFT" styleClass="guide-step">
+                                        <StackPane styleClass="step-number-circle">
+                                            <Label text="3" styleClass="step-number"/>
+                                        </StackPane>
+                                        <VBox spacing="5">
+                                            <Label text="SUBMIT YOUR ANSWER" styleClass="step-title"/>
+                                            <Label text="Once you've sorted all items correctly, click the 'SEND' button. The faster you complete, the higher your score!" 
+                                                   wrapText="true" styleClass="step-description"/>
+                                        </VBox>
+                                    </HBox>
+
+                                    <Separator styleClass="guide-separator"/>
+
+                                    <!-- Step 4 -->
+                                    <HBox spacing="15" alignment="TOP_LEFT" styleClass="guide-step">
+                                        <StackPane styleClass="step-number-circle">
+                                            <Label text="4" styleClass="step-number"/>
+                                        </StackPane>
+                                        <VBox spacing="5">
+                                            <Label text="WIN THE MATCH" styleClass="step-title"/>
+                                            <Label text="After multiple rounds, the player with the highest total score wins. You can invite your opponent to play another match!" 
+                                                   wrapText="true" styleClass="step-description"/>
+                                        </VBox>
+                                    </HBox>
+
+                                    <!-- Tips Section -->
+                                    <VBox spacing="10" styleClass="tips-section">
+                                        <Label text="💡 PRO TIPS" styleClass="tips-title"/>
+                                        <Label text="• Speed matters! Complete sorting as fast as possible" styleClass="tip-item"/>
+                                        <Label text="• Watch the timer - you have limited time per round" styleClass="tip-item"/>
+                                        <Label text="• Check if it's ascending or descending order" styleClass="tip-item"/>
+                                        <Label text="• Use the RESET button to restart if needed" styleClass="tip-item"/>
+                                    </VBox>
+                                </VBox>
+                            </ScrollPane>
                         </VBox>
 
+                        <!-- Action Buttons -->
                         <HBox spacing="20" alignment="CENTER">
-                            <Button fx:id="scoreboardButton" text="Scoreboard"
+                            <Button fx:id="scoreboardButton" text="🏆 LEADERBOARD"
                                 onAction="#onScoreboard"
-                                styleClass="primary-button" />
-                            <Button fx:id="historyButton" text="History"
                                 styleClass="primary-button" />
                         </HBox>
                     </VBox>
 
-                    <!-- Right: Online players list -->
-                    <VBox spacing="10" prefWidth="300" styleClass="players-panel">
-                        <Label text="Online Players" styleClass="players-title" />
-                        <ListView fx:id="onlinePlayersList" styleClass="player-list"
-                            prefWidth="280" prefHeight="400" />
-                    </VBox>
                 </HBox>
             </VBox>
         </center>
     </BorderPane>
+
+    <!--THÊM PHẦN NÀY: TextArea ẩn để controller không bị lỗi -->
+    <TextArea fx:id="messageArea" visible="false" managed="false"/>
 </StackPane>

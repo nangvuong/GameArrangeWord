@@ -36,25 +36,16 @@
                     <Label fx:id="welcomeLabel" text="Welcome, Player"
                         styleClass="welcome-label" />
                 </center>
-
-                <!-- 🔸 Right: logout button -->
-                <right>
-                    <Button fx:id="logoutButton" text="⏻ Logout"
-                        onAction="#onLogout" styleClass="logout-button" />
-                </right>
-
             </BorderPane>
         </top>
 
         <!-- Center content -->
         <center>
             <VBox alignment="CENTER" spacing="25">
-                <Label text="🎮 GAME SORTING" styleClass="title" />
+                <Label text="GAME SẮP XẾP" styleClass="title" />
                 <HBox spacing="20" alignment="CENTER">
                     <Button fx:id="playButton" text="▶ PLAY" onAction="#onPlay"
                         styleClass="primary-button" />
-                    <Button fx:id="settingsButton" text="⚙ SETTINGS"
-                        styleClass="secondary-button" />
                 </HBox>
             </VBox>
         </center>
