@@ -28,31 +28,39 @@ import javafx.geometry.Insets;
 import java.net.URL;
 import java.util.*;
 
-
 import org.json.JSONObject;
 
 import javafx.scene.Node;
 
-
 public class GameSortingController implements Initializable {
-    
+
     private ClientManager clientManager;
     private GameData gameData;
     private MatchSummary matchSummary;
     private int roundNumber = 1;
-    
+
     // UI Components
-    @FXML private Label roomIdLabel, timeLabel, orderLabel;
-    @FXML private Label userNickname, userTotalMatches, userWins, userScore;
-    @FXML private Label opponentNickname, opponentTotalMatches, opponentWins, opponentScore;
-    @FXML private Label userCurrentScore, opponentCurrentScore;
-    @FXML private Label userScoreChange, opponentScoreChange;
-    @FXML private Pane gameZone;
-    @FXML private VBox topRowContainer, bottomRowContainer;
-    @FXML private Line dividerLine;
-    @FXML private Button resetButton, sendButton, continueButton, exitButton;
-    @FXML private ImageView userAvatar, opponentAvatar, backgroundImage;
-    
+    @FXML
+    private Label roomIdLabel, timeLabel, orderLabel;
+    @FXML
+    private Label userNickname, userTotalMatches, userWins, userScore;
+    @FXML
+    private Label opponentNickname, opponentTotalMatches, opponentWins, opponentScore;
+    @FXML
+    private Label userCurrentScore, opponentCurrentScore;
+    @FXML
+    private Label userScoreChange, opponentScoreChange;
+    @FXML
+    private Pane gameZone;
+    @FXML
+    private VBox topRowContainer, bottomRowContainer;
+    @FXML
+    private Line dividerLine;
+    @FXML
+    private Button resetButton, sendButton, continueButton, exitButton;
+    @FXML
+    private ImageView userAvatar, opponentAvatar, backgroundImage;
+
     // Game state và dialog management
     private Timeline gameTimer;
     private int remainingTime = 0;
@@ -64,7 +72,6 @@ public class GameSortingController implements Initializable {
     private Dialog<Void> currentWaitingDialog;
     private Dialog<Void> currentResultWaitingDialog;
 
-    
     // Constants
     private static final int BOX_WIDTH = 80;
     private static final int BOX_HEIGHT = 60;
@@ -74,12 +81,13 @@ public class GameSortingController implements Initializable {
     public void setClientManager(ClientManager clientManager) {
         this.clientManager = clientManager;
     }
-    
+
     public void setGameData(GameData gameData) {
         this.gameData = gameData;
-        
+
         populateGameData();
     }
+
     public void updateQuestion(Question question) {
         if (gameData != null) {
             gameData.setQuestion(question);
@@ -93,45 +101,46 @@ public class GameSortingController implements Initializable {
         setupGameZone();
         setupButtonStyles();
     }
-    
+
     private void setupGameZone() {
         dividerLine.setStartX(0);
         dividerLine.setEndX(gameZone.getPrefWidth());
         dividerLine.setStartY(300);
         dividerLine.setEndY(300);
         dividerLine.getStrokeDashArray().addAll(5.0, 5.0);
-        
+
         topRowContainer.setPrefWidth(gameZone.getPrefWidth());
         bottomRowContainer.setPrefWidth(gameZone.getPrefWidth());
         topRowContainer.setAlignment(Pos.TOP_CENTER);
         bottomRowContainer.setAlignment(Pos.TOP_CENTER);
     }
-    
+
     private void setupButtonStyles() {
         setupButtonHoverEffects(resetButton);
         setupButtonHoverEffects(sendButton);
         setupButtonHoverEffects(continueButton);
         buttonGameNotStart();
     }
-    
+
     private void setupButtonHoverEffects(Button button) {
         button.addEventHandler(MouseEvent.MOUSE_ENTERED, e -> {
             button.setScaleX(1.05);
             button.setScaleY(1.05);
         });
-        
+
         button.addEventHandler(MouseEvent.MOUSE_EXITED, e -> {
             button.setScaleX(1.0);
             button.setScaleY(1.0);
         });
     }
-    
+
     private void populateGameData() {
-        if (gameData == null) return;
-        
+        if (gameData == null)
+            return;
+
         Platform.runLater(() -> {
             roomIdLabel.setText("ROOM ID: " + gameData.getMatchId());
-            
+
             if (gameData.getSelf() != null) {
                 userNickname.setText(safeText(gameData.getSelf().getNickname(), "Player"));
                 userTotalMatches.setText("Matches: " + gameData.getSelf().getTotalMatches());
@@ -140,31 +149,30 @@ public class GameSortingController implements Initializable {
                 System.out.println("Self Score: " + gameData.getSelf().getTotalScore());
                 userScore.setText("Score: " + gameData.getSelf().getTotalScore());
             }
-            
+
             if (gameData.getOpponent() != null) {
                 opponentNickname.setText(safeText(gameData.getOpponent().getNickname(), "Opponent"));
                 opponentTotalMatches.setText("Matches: " + gameData.getOpponent().getTotalMatches());
                 opponentWins.setText("Wins: " + gameData.getOpponent().getTotalWins());
                 opponentScore.setText("Score: " + gameData.getOpponent().getTotalScore());
             }
-           
-            
+
             showCountdownAndStartGame();
         });
     }
-    
+
     private void showCountdownAndStartGame() {
-        if (gameData == null || gameData.getQuestion() == null) return;
+        if (gameData == null || gameData.getQuestion() == null)
+            return;
         buttonGameStart();
 
         Platform.runLater(() -> {
-            //closeCountdownDialog();
+            // closeCountdownDialog();
 
             Dialog<Void> countdownDialog = new Dialog<>();
             countdownDialog.getDialogPane().getStyleClass().add("countdown-dialog");
             countdownDialog.setTitle("Get Ready!");
             countdownDialog.setHeaderText(null);
-
 
             // Thêm nút để dialog hoạt động đúng
             countdownDialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
@@ -188,7 +196,7 @@ public class GameSortingController implements Initializable {
             content.getChildren().addAll(instructionLabel, countdownLabel);
             countdownDialog.getDialogPane().setContent(content);
 
-            final int[] countdown = {5};
+            final int[] countdown = { 5 };
             Timeline countdownTimer = new Timeline();
 
             KeyFrame keyFrame = new KeyFrame(Duration.seconds(1), e -> {
@@ -231,7 +239,8 @@ public class GameSortingController implements Initializable {
      * ✅ Thêm animation đóng mượt
      */
     private void fadeOutAndClose(Dialog<?> dialog) {
-        if (dialog == null || !dialog.isShowing()) return;
+        if (dialog == null || !dialog.isShowing())
+            return;
 
         Node root = dialog.getDialogPane().getScene().getRoot();
         FadeTransition fade = new FadeTransition(Duration.millis(300), root);
@@ -242,150 +251,150 @@ public class GameSortingController implements Initializable {
     }
 
     // private void closeCountdownDialog() {
-    //     if (currentCountdownDialog != null && currentCountdownDialog.isShowing()) {
-    //         fadeOutAndClose(currentCountdownDialog);
-    //         currentCountdownDialog = null;
-    //     }
+    // if (currentCountdownDialog != null && currentCountdownDialog.isShowing()) {
+    // fadeOutAndClose(currentCountdownDialog);
+    // currentCountdownDialog = null;
+    // }
     // }
 
-    
     private void startGameImmediately() {
-       
+
         Platform.runLater(() -> {
             buttonGameStart();
             setupQuestion(gameData.getQuestion());
             startGameTimer(gameData.getQuestion().getTimeLimit());
         });
     }
-    
+
     private void setupQuestion(Question question) {
-        if (question == null) return;
-        
+        if (question == null)
+            return;
+
         ascendingOrder = "ASCENDING".equalsIgnoreCase(question.getSortOrder());
         orderLabel.setText("Order: " + (ascendingOrder ? "ASCENDING" : "DESCENDING"));
-        
+
         generateNumberBoxes(question.getItems());
     }
-    
+
     private void generateNumberBoxes(List<String> items) {
         clearGameZone();
-        
+
         if (items == null || items.isEmpty()) {
             items = Arrays.asList("7", "2", "1", "9", "5", "12");
         }
-        
+
         HBox topRow = createNumberRow(items, true);
         HBox bottomRow = createNumberRow(new ArrayList<>(), false);
-        
+
         topRowContainer.getChildren().add(topRow);
         bottomRowContainer.getChildren().add(bottomRow);
     }
-    
+
     private HBox createNumberRow(List<String> items, boolean isTopRow) {
         HBox row = new HBox(BOX_SPACING);
         row.setAlignment(Pos.CENTER);
-        
+
         for (String item : items) {
             NumberBox numberBox = new NumberBox(item, isTopRow);
             row.getChildren().add(numberBox);
-            
+
             if (isTopRow) {
                 topRowBoxes.add(numberBox);
             } else {
                 bottomRowBoxes.add(numberBox);
             }
         }
-        
+
         return row;
     }
-    
+
     private void clearGameZone() {
         topRowContainer.getChildren().clear();
         bottomRowContainer.getChildren().clear();
         topRowBoxes.clear();
         bottomRowBoxes.clear();
     }
-    
+
     private void startGameTimer(int seconds) {
         remainingTime = seconds;
         updateTimeLabel();
-        
+
         if (gameTimer != null) {
             gameTimer.stop();
         }
-        
+
         gameTimer = new Timeline(
-            new KeyFrame(Duration.seconds(1), e -> {
-                remainingTime--;
-                updateTimeLabel();
-                
-                if (remainingTime <= 0) {
-                    gameTimer.stop();
-                    handleTimeUp();
-                } else if (remainingTime <= 10) {
-                    timeLabel.getStyleClass().add("time-warning");
-                } else {
-                    timeLabel.getStyleClass().removeAll("time-warning");
-                }
-            })
-        );
+                new KeyFrame(Duration.seconds(1), e -> {
+                    remainingTime--;
+                    updateTimeLabel();
+
+                    if (remainingTime <= 0) {
+                        gameTimer.stop();
+                        handleTimeUp();
+                    } else if (remainingTime <= 10) {
+                        timeLabel.getStyleClass().add("time-warning");
+                    } else {
+                        timeLabel.getStyleClass().removeAll("time-warning");
+                    }
+                }));
         gameTimer.setCycleCount(Timeline.INDEFINITE);
         gameTimer.play();
     }
-    
+
     private void updateTimeLabel() {
         timeLabel.setText("Time: " + remainingTime + "s");
     }
-    
+
     private void handleTimeUp() {
         showAlert("Time's up!", "Time's up! You lost.", Alert.AlertType.INFORMATION);
         sendUserAnswer("TIMEOUT");
     }
-    
+
     @FXML
     private void onReset() {
         if (gameData != null && gameData.getQuestion() != null) {
             generateNumberBoxes(gameData.getQuestion().getItems());
         }
     }
-    
+
     @FXML
     private void onSendAnswer() {
         if (gameTimer != null) {
             gameTimer.stop();
         }
-        
+
         boolean correct = isSortedCorrectly();
         if (correct) {
-            showAlert("Exactly!", 
-                "Congratulations! You won!\nTime: " + (gameData.getQuestion().getTimeLimit() - remainingTime) + "s", 
-                Alert.AlertType.INFORMATION);
+            showAlert("Exactly!",
+                    "Congratulations! You won!\nTime: " + (gameData.getQuestion().getTimeLimit() - remainingTime) + "s",
+                    Alert.AlertType.INFORMATION);
             sendUserAnswer("CORRECT");
         } else {
-            showAlert("WRONG ANSWER", 
-                "Not sorted correctly. Poor you!", 
-                Alert.AlertType.WARNING);
+            showAlert("WRONG ANSWER",
+                    "Not sorted correctly. Poor you!",
+                    Alert.AlertType.WARNING);
             sendUserAnswer("WRONG");
         }
         continueButton.setDisable(true);
     }
-    
+
     private boolean isSortedCorrectly() {
         List<String> playerOrder = bottomRowBoxes.stream()
-            .map(box -> box.getValue())
-            .toList();
-            
+                .map(box -> box.getValue())
+                .toList();
+
         return playerOrder.equals(gameData.getQuestion().getCorrectAnswer());
     }
-    
+
     @FXML
     private void onContinue() {
         if (gameData != null && gameData.getOpponent() != null) {
             invitePlayer(gameData.getOpponent().getUsername(), gameData.getOpponent().getNickname());
         }
     }
+
     private void invitePlayer(String username, String nickname) {
-        
+
         showWaitingDialog("Waiting for " + nickname + " to respond...");
 
         JSONObject inviteMsg = new JSONObject();
@@ -393,6 +402,7 @@ public class GameSortingController implements Initializable {
         inviteMsg.put("targetUsername", username);
         clientManager.send(inviteMsg);
     }
+
     private void showWaitingDialog(String message) {
         Platform.runLater(() -> {
             // Đóng dialog cũ nếu có
@@ -429,6 +439,7 @@ public class GameSortingController implements Initializable {
             waitingDialog.show();
         });
     }
+
     public void closeWaitingDialog() {
         if (currentWaitingDialog != null && currentWaitingDialog.isShowing()) {
             fadeOutAndClose(currentWaitingDialog);
@@ -442,11 +453,11 @@ public class GameSortingController implements Initializable {
             alert.setTitle("Continue Invitation");
             alert.setHeaderText("Game Continue Invitation Received!");
             alert.setContentText(inviterNickname + " invited you to play next game!\nDo you want to accept?");
-            
+
             ButtonType acceptButton = new ButtonType("Accept");
             ButtonType rejectButton = new ButtonType("Reject");
             alert.getButtonTypes().setAll(acceptButton, rejectButton);
-            
+
             // ❌ KHÔNG dùng showAndWait() vì nó block
             alert.show();
 
@@ -485,24 +496,22 @@ public class GameSortingController implements Initializable {
             });
         });
     }
+
     public void showInviteResult(String targetNickname, boolean accepted) {
         Platform.runLater(() -> {
 
-            String message = targetNickname + (accepted ? " accepted your invitation!" : " declined your invitation.");  
+            String message = targetNickname + (accepted ? " accepted your invitation!" : " declined your invitation.");
             // Nếu bị từ chối, hiển thị cảnh báo
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Invitation Declined");
             alert.setHeaderText(null);
             alert.setContentText(message);
             alert.showAndWait();
-            
+
         });
     }
 
-
-   
-    
-  @FXML
+    @FXML
     private void onExit() {
         // ⚠️ Hiển thị hộp thoại xác nhận
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -522,8 +531,6 @@ public class GameSortingController implements Initializable {
             if (gameTimer != null) {
                 gameTimer.stop();
             }
-           
-           
 
             if (gameInProgress) {
                 sendUserAnswer("QUIT");
@@ -547,13 +554,12 @@ public class GameSortingController implements Initializable {
                 }
             }
 
-            
         }
         // ❌ Nếu người dùng chọn "Hủy" thì không làm gì cả
     }
-     private void showResultWaitingDialog() {
-        Platform.runLater(() -> {
 
+    private void showResultWaitingDialog() {
+        Platform.runLater(() -> {
 
             Dialog<Void> waitingDialog = new Dialog<>();
             waitingDialog.setTitle("Waiting for Final Result");
@@ -563,7 +569,7 @@ public class GameSortingController implements Initializable {
             // Tạo progress indicator (dấu xoay vòng)
             ProgressIndicator progressIndicator = new ProgressIndicator();
             progressIndicator.setPrefSize(50, 50);
-                // Thêm nút để dialog hoạt động đúng
+            // Thêm nút để dialog hoạt động đúng
             waitingDialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
 
             // Ẩn nút Close khỏi giao diện
@@ -578,7 +584,7 @@ public class GameSortingController implements Initializable {
             content.setStyle("-fx-background-color: white;");
 
             waitingDialog.getDialogPane().setContent(content);
-            
+
             // KHÔNG cho phép đóng bằng nút X hoặc ESC
             waitingDialog.setResultConverter(buttonType -> null);
             waitingDialog.initStyle(StageStyle.UTILITY);
@@ -588,6 +594,7 @@ public class GameSortingController implements Initializable {
             waitingDialog.show();
         });
     }
+
     public void closeResultWaitingDialog() {
         Platform.runLater(() -> {
             if (currentResultWaitingDialog != null && currentResultWaitingDialog.isShowing()) {
@@ -597,15 +604,15 @@ public class GameSortingController implements Initializable {
         });
     }
 
-    
     private void sendUserAnswer(String status) {
         buttonGameNotStart();
-       try {
+        try {
             JSONObject data = new JSONObject();
             data.put("matchId", gameData.getMatchId());
             data.put("userId", gameData.getSelf().getId());
             data.put("roundNumber", roundNumber);
-            data.put("timeCompleted", gameData.getQuestion().getTimeLimit() - remainingTime); // Thời gian tính bằng giây
+            data.put("timeCompleted", gameData.getQuestion().getTimeLimit() - remainingTime); // Thời gian tính bằng
+                                                                                              // giây
             data.put("status", status);
 
             org.json.JSONObject msg = new org.json.JSONObject();
@@ -617,11 +624,9 @@ public class GameSortingController implements Initializable {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        
+
     }
-    
-    
-    
+
     private void showAlert(String title, String message, Alert.AlertType type) {
         Platform.runLater(() -> {
             Alert alert = new Alert(type);
@@ -631,8 +636,10 @@ public class GameSortingController implements Initializable {
             alert.showAndWait();
         });
     }
+
     private void showMatchResultAlert() {
-        if (matchSummary == null || gameData == null) return;
+        if (matchSummary == null || gameData == null)
+            return;
         continueButton.setDisable(false);
         Platform.runLater(() -> {
             try {
@@ -641,11 +648,11 @@ public class GameSortingController implements Initializable {
                 int opponentWins = matchSummary.getOpponentWins(currentUserId);
                 int myTotalScore = matchSummary.getMyTotalScore(currentUserId);
                 int opponentTotalScore = matchSummary.getOpponentTotalScore(currentUserId);
-                
+
                 // Xác định kết quả
                 String resultEmoji;
                 String resultColor;
-                
+
                 if (myWins > opponentWins) {
                     resultEmoji = "🏆";
                     resultColor = "GREEN";
@@ -656,21 +663,20 @@ public class GameSortingController implements Initializable {
                     resultEmoji = "🤝";
                     resultColor = "ORANGE";
                 }
-                
+
                 // Tạo dialog custom đơn giản
                 Dialog<String> dialog = new Dialog<>();
                 dialog.setTitle("Round Result");
                 dialog.setHeaderText(resultEmoji + " Round " + roundNumber + " Finished!");
-                
-            
+
                 // Nội dung
                 VBox content = new VBox(10);
                 content.setPadding(new Insets(10));
                 content.setAlignment(Pos.CENTER);
-                
+
                 Label resultLabel = new Label();
                 resultLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
-                
+
                 if (myWins > opponentWins) {
                     resultLabel.setText("🎉 VICTORY! 🎉");
                     resultLabel.setStyle("-fx-text-fill: green; -fx-font-size: 18px; -fx-font-weight: bold;");
@@ -681,12 +687,12 @@ public class GameSortingController implements Initializable {
                     resultLabel.setText("🤝 DRAW");
                     resultLabel.setStyle("-fx-text-fill: orange; -fx-font-size: 18px; -fx-font-weight: bold;");
                 }
-                
-                Label scoreLabel = new Label(String.format("You get score: %d",matchSummary.getMyScore(currentUserId)));
+
+                Label scoreLabel = new Label(
+                        String.format("You get score: %d", matchSummary.getMyScore(currentUserId)));
                 scoreLabel.setStyle("-fx-font-size: 14px;");
-            
-                
-                 // Thêm nút để dialog hoạt động đúng
+
+                // Thêm nút để dialog hoạt động đúng
                 dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
 
                 // Ẩn nút Close khỏi giao diện
@@ -695,61 +701,61 @@ public class GameSortingController implements Initializable {
                 closeButton.setVisible(false);
                 content.getChildren().addAll(resultLabel, scoreLabel);
                 dialog.getDialogPane().setContent(content);
-                
+
                 dialog.show();
-                    // Auto close fallback
+                // Auto close fallback
                 PauseTransition autoClose = new PauseTransition(Duration.seconds(5));
                 autoClose.setOnFinished(e -> fadeOutAndClose(dialog));
-                autoClose.play();                
+                autoClose.play();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
     }
-    
+
     private String safeText(String text, String defaultText) {
         return (text == null || text.isEmpty()) ? defaultText : text;
     }
-    
+
     // Inner class for number boxes
     private class NumberBox extends StackPane {
         private String value;
         private boolean isTopRow;
         private Label numberLabel;
-        
+
         public NumberBox(String value, boolean isTopRow) {
             this.value = value;
             this.isTopRow = isTopRow;
-            
+
             setupAppearance();
             setupInteractions();
         }
-        
+
         private void setupAppearance() {
             setPrefSize(BOX_WIDTH, BOX_HEIGHT);
             getStyleClass().add(isTopRow ? "number-box-top" : "number-box-bottom");
-            
+
             numberLabel = new Label(value);
             numberLabel.setFont(Font.font("Arial", FontWeight.BOLD, 20));
             numberLabel.setTextFill(Color.BLACK);
-            
+
             getChildren().add(numberLabel);
         }
-        
+
         private void setupInteractions() {
             setOnMouseClicked(e -> handleBoxClick());
-            
+
             setOnMouseEntered(e -> {
                 setScaleX(1.1);
                 setScaleY(1.1);
             });
-            
+
             setOnMouseExited(e -> {
                 setScaleX(1.0);
                 setScaleY(1.0);
             });
         }
-        
+
         private void handleBoxClick() {
             if (isTopRow) {
                 moveToBottom();
@@ -757,7 +763,7 @@ public class GameSortingController implements Initializable {
                 moveToTop();
             }
         }
-        
+
         private void moveToBottom() {
             topRowBoxes.remove(this);
             bottomRowBoxes.add(this);
@@ -766,7 +772,7 @@ public class GameSortingController implements Initializable {
             getStyleClass().add("number-box-bottom");
             updateVisualPosition();
         }
-        
+
         private void moveToTop() {
             bottomRowBoxes.remove(this);
             topRowBoxes.add(this);
@@ -775,56 +781,60 @@ public class GameSortingController implements Initializable {
             getStyleClass().add("number-box-top");
             updateVisualPosition();
         }
-        
+
         private void updateVisualPosition() {
             if (getParent() instanceof HBox) {
                 ((HBox) getParent()).getChildren().remove(this);
             }
-            
-            HBox targetRow = isTopRow ? (HBox) topRowContainer.getChildren().get(0) 
-                                     : (HBox) bottomRowContainer.getChildren().get(0);
+
+            HBox targetRow = isTopRow ? (HBox) topRowContainer.getChildren().get(0)
+                    : (HBox) bottomRowContainer.getChildren().get(0);
             targetRow.getChildren().add(this);
         }
-        
+
         public String getValue() {
             return value;
         }
     }
-    
+
     public void updateMatchSummary(MatchSummary summary) {
         this.matchSummary = summary;
-        updateMatchSummaryUI();
+        closeResultWaitingDialog();
+        updateMatchSummaryUI(); // // Cập nhật UI
         showMatchResultAlert(); // Thêm dòng này
     }
-    
+
     private void updateMatchSummaryUI() {
-        if (matchSummary == null || gameData == null) return;
-        
+        if (matchSummary == null || gameData == null)
+            return;
+
         Platform.runLater(() -> {
             try {
                 int currentUserId = (gameData.getSelf().getId());
-                
+
                 int myWins = matchSummary.getMyWins(currentUserId);
                 int opponentWins = matchSummary.getOpponentWins(currentUserId);
                 int myTotalScore = matchSummary.getMyTotalScore(currentUserId);
                 int opponentTotalScore = matchSummary.getOpponentTotalScore(currentUserId);
-                
+
                 userCurrentScore.setText(String.valueOf(myWins));
                 opponentCurrentScore.setText(String.valueOf(opponentWins));
-                
+
                 updateScoreLabel(userScoreChange, myTotalScore);
                 updateScoreLabel(opponentScoreChange, opponentTotalScore);
-                
+                continueButton.setVisible(true);
+                continueButton.setDisable(false);
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
     }
-    
+
     private void updateScoreLabel(Label label, int score) {
         String text = (score >= 0 ? "+" : "") + score;
         label.setText(text);
-        
+
         if (score >= 0) {
             label.getStyleClass().removeAll("score-negative");
             label.getStyleClass().add("score-positive");
@@ -833,31 +843,34 @@ public class GameSortingController implements Initializable {
             label.getStyleClass().add("score-negative");
         }
     }
-    
+
     public void increaseRoundNumber() {
         this.roundNumber++;
     }
-    
+
     // Phương thức cleanup khi rời khỏi game
     public void onLeaveGame() {
         if (gameTimer != null) {
             gameTimer.stop();
         }
-       // closeCountdownDialog();
+        // closeCountdownDialog();
     }
+
     private void buttonGameStart() {
         gameInProgress = true;
         resetButton.setDisable(false);
         sendButton.setDisable(false);
         continueButton.setDisable(true);
     }
+
     private void buttonGameNotStart() {
         gameInProgress = false;
         resetButton.setDisable(true);
         sendButton.setDisable(true);
         continueButton.setDisable(false);
     }
-        /**
+
+    /**
      * Đóng tất cả dialog đang mở
      */
     public void closeAllDialogs() {
@@ -867,13 +880,13 @@ public class GameSortingController implements Initializable {
                 currentResultWaitingDialog.close();
                 currentResultWaitingDialog = null;
             }
-            
+
             // Đóng dialog chờ tiếp tục
             if (currentWaitingDialog != null && currentWaitingDialog.isShowing()) {
                 currentWaitingDialog.close();
                 currentWaitingDialog = null;
             }
-            
+
             // Đóng dialog đếm ngược
             if (currentCountdownDialog != null && currentCountdownDialog.isShowing()) {
                 currentCountdownDialog.close();

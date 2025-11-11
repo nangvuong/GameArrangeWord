@@ -2,51 +2,41 @@
 
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.image.Image?>
 
-<?import javafx.scene.media.MediaView?>
 <StackPane xmlns:fx="http://javafx.com/fxml"
            fx:controller="com.ltm.game_client_v3.views.AuthController"
-           stylesheets="@auth.css">
-
-    <ImageView fitWidth="1280" fitHeight="720" preserveRatio="false">
-        <image>
-            <Image url="@../images/home-bg.jpg" />
-        </image>
-    </ImageView>
-
+           stylesheets="@base.css, @auth.css"
+           styleClass="view-container">
 
     <!-- Container -->
-    <StackPane alignment="CENTER">
+    <StackPane alignment="CENTER" maxWidth="450">
 
         <!-- LOGIN PANE -->
-        <VBox fx:id="loginPane" alignment="CENTER" spacing="15" styleClass="login-box">
-            <Label text="🎮 GAME PORTAL" styleClass="game-title"/>
+        <VBox fx:id="loginPane" alignment="CENTER" spacing="20" styleClass="card">
+            <Label text="Welcome Back" styleClass="view-title"/>
 
-            <TextField fx:id="loginUsername" promptText="Username" styleClass="input-field"/>
-            <PasswordField fx:id="loginPassword" promptText="Password" styleClass="input-field"/>
+            <TextField fx:id="loginUsername" promptText="Username" />
+            <PasswordField fx:id="loginPassword" promptText="Password" />
 
-            <Label fx:id="loginError" textFill="red" visible="false"/>
+            <Label fx:id="loginError" styleClass="error-label" visible="false"/>
 
-            <Button text="LOGIN" onAction="#onLogin" styleClass="btn-primary"/>
-            <Hyperlink text="Create new account" onAction="#showRegister" styleClass="link-small"/>
+            <Button text="LOGIN" onAction="#onLogin" styleClass="primary-button" prefWidth="Infinity"/>
+            <Hyperlink text="Create new account" onAction="#showRegister"/>
         </VBox>
 
         <!-- REGISTER PANE -->
         <VBox fx:id="registerPane" alignment="CENTER" spacing="15"
-              styleClass="login-box" visible="false">
-            <Label text="📝 REGISTER ACCOUNT" styleClass="game-title"/>
-            <TextField fx:id="regUsername" promptText="Username" styleClass="input-field"/>
-            <TextField fx:id="regNickname" promptText="Nickname" styleClass="input-field"/>
-            <PasswordField fx:id="regPassword" promptText="Password" styleClass="input-field"/>
-            <PasswordField fx:id="regConfirm" promptText="Confirm Password" styleClass="input-field"/>
+              styleClass="card" visible="false">
+            <Label text="Create Account" styleClass="view-title"/>
+            <TextField fx:id="regUsername" promptText="Username"/>
+            <TextField fx:id="regNickname" promptText="Nickname"/>
+            <PasswordField fx:id="regPassword" promptText="Password"/>
+            <PasswordField fx:id="regConfirm" promptText="Confirm Password"/>
 
-            <Label fx:id="regError" textFill="red" visible="false"/>
+            <Label fx:id="regError" styleClass="error-label" visible="false"/>
 
-            <Button text="REGISTER" onAction="#onRegister" styleClass="btn-primary"/>
-            <Hyperlink text="← Back to Login" onAction="#showLogin" styleClass="link-small"/>
+            <Button text="REGISTER" onAction="#onRegister" styleClass="primary-button" prefWidth="Infinity"/>
+            <Hyperlink text="Already have an account? Login" onAction="#showLogin"/>
         </VBox>
-
     </StackPane>
 </StackPane>

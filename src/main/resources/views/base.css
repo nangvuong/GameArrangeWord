@@ -1,0 +1,103 @@
+/* === BASE STYLESHEET === */
+
+.root {
+    /* Clean and modern font */
+    -fx-font-family: "Segoe UI", "Roboto", "Helvetica", sans-serif;
+
+    /* Define base colors for easy theme changes */
+    -primary-color: #0078D7; /* A modern blue */
+    -primary-dark: #005A9E;
+    -accent-color: #4CAF50;  /* Green for success/send */
+    -warn-color: #FF6B6B;    /* Red for warnings/reset */
+    -bg-color: #1E1E1E;      /* Dark background */
+    -surface-color: #2D2D2D; /* For panels and cards */
+    -text-color: #EAEAEA;
+    -text-muted-color: #9E9E9E;
+    -border-color: #444444;
+}
+
+/* --- General Component Styles --- */
+
+.label {
+    -fx-text-fill: -text-color;
+}
+
+.text-field, .password-field {
+    -fx-background-color: -surface-color;
+    -fx-text-fill: -text-color;
+    -fx-prompt-text-fill: -text-muted-color;
+    -fx-border-color: -border-color;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-pref-height: 45px;
+    -fx-font-size: 14px;
+    -fx-padding: 0 12px;
+}
+
+.text-field:focused, .password-field:focused {
+    -fx-border-color: -primary-color;
+    -fx-border-width: 2px;
+}
+
+.button {
+    -fx-cursor: hand;
+    -fx-background-radius: 8px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-pref-height: 45px;
+    -fx-font-size: 14px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 2);
+    -fx-transition: -fx-background-color 0.3s;
+}
+
+.button:hover {
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+/* --- Specific Button Variants --- */
+
+.primary-button {
+    -fx-background-color: -primary-color;
+}
+.primary-button:hover {
+    -fx-background-color: -primary-dark;
+}
+
+.success-button {
+    -fx-background-color: -accent-color;
+}
+.success-button:hover {
+    -fx-background-color: derive(-accent-color, -20%);
+}
+
+.danger-button {
+    -fx-background-color: -warn-color;
+}
+.danger-button:hover {
+    -fx-background-color: derive(-warn-color, -20%);
+}
+
+/* --- View Containers --- */
+.view-container {
+    -fx-background-color: -bg-color;
+}
+
+.card {
+    -fx-background-color: -surface-color;
+    -fx-background-radius: 12px;
+    -fx-padding: 30px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 15, 0, 0, 5);
+}
+
+/* --- Titles and Text --- */
+.view-title {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.error-label {
+    -fx-text-fill: -warn-color;
+    -fx-font-size: 12px;
+}
