@@ -80,6 +80,7 @@ public class Home extends JPanel implements ServerMessageListener {
             // Gửi lời mời chơi đến server
             System.out.println(currentPlayer.getFullName() + " challenged " + targetPlayer.getUsername());
             PlayerIO.inviteUserToGame(targetPlayer.getUsername());
+            homeTab.showWaitingForResponse(targetPlayer.getUsername());
         });
         homeTab.setAcceptChallengeCallback((challenger) -> {
             System.out.println(currentPlayer.getFullName() + " accepted challenge from " + challenger.getUsername());
@@ -185,14 +186,7 @@ public class Home extends JPanel implements ServerMessageListener {
         String opponentNickname = message.optString("opponentNickname", "");
 
         if (accepted) {
-            System.out.println("✅ Invitation accepted by " + opponentNickname + "! Waiting for game data...");
-
-            // ← XÓA DÒNG NÀY: gameStartCallback.onGameStart();
-
-            // Hiển thị thông báo chờ đợi
-            homeTab.showWaitingForGameStart(opponentNickname);
-
-            // Chờ server gửi START_GAME với đầy đủ dữ liệu
+            gameStartCallback.onGameStart();
         } else {
             System.out.println("❌ Invitation declined by " + opponentNickname);
             JOptionPane.showMessageDialog(this,

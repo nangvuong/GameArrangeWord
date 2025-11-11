@@ -7,7 +7,6 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import model.Player;
 
 public class HomeTab extends JPanel {
@@ -59,31 +58,6 @@ public class HomeTab extends JPanel {
 
         add(leftPanel, BorderLayout.WEST);
         add(centerContentPanel, BorderLayout.CENTER);
-
-        // Show random challenge invitation after a delay
-        scheduleRandomChallenge();
-    }
-
-    private void scheduleRandomChallenge() {
-        SwingUtilities.invokeLater(() -> {
-            Timer timer = new Timer(2000, e -> {
-                // Chọn một người chơi ngẫu nhiên (online hoặc playing) để thách đấu
-                List<Player> onlinePlayers = new ArrayList<>();
-                for (Player player : playerList) {
-                    if (!player.getUsername().equals(currentPlayerUsername) && player.getStatus() >= 0) {
-                        onlinePlayers.add(player);
-                    }
-                }
-
-                if (!onlinePlayers.isEmpty()) {
-                    Random rand = new Random();
-                    Player challenger = onlinePlayers.get(rand.nextInt(onlinePlayers.size()));
-                    showChallengeInvitation(challenger);
-                }
-            });
-            timer.setRepeats(false);
-            timer.start();
-        });
     }
 
     private void initializeMockPlayers() {
