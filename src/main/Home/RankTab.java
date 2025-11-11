@@ -118,4 +118,12 @@ public class RankTab extends JPanel {
 
         return item;
     }
+
+    public void updateRankList(List<Player> playerList, Player currentPlayer) {
+        this.removeAll();
+        this.setLayout(new BorderLayout());
+        this.add(new RankTab(playerList, currentPlayer), BorderLayout.CENTER);
+        this.revalidate();
+        this.repaint();
+    }
 }

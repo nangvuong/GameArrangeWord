@@ -22,8 +22,6 @@ public class Home extends JPanel implements ServerMessageListener {
     private HomeTab homeTab;
     private RankTab rankTab;
     private TabButton homeTabBtn;
-    private TabButton profileTabBtn;
-    private TabButton historyTabBtn;
     private TabButton rankTabBtn;
     private LogoutCallback logoutCallback;
     private GameStartCallback gameStartCallback;
@@ -95,8 +93,6 @@ public class Home extends JPanel implements ServerMessageListener {
         });
 
         tabContentPanel.add(homeTab, "HOME");
-        tabContentPanel.add(new ProfileTab(currentPlayer), "PROFILE");
-        tabContentPanel.add(new HistoryTab(currentPlayer), "HISTORY");
 
         // Tạo RankTab và lưu reference
         rankTab = new RankTab(homeTab.getPlayerList(), currentPlayer);
@@ -167,6 +163,7 @@ public class Home extends JPanel implements ServerMessageListener {
 
             // Update player list trong HomeTab
             homeTab.updatePlayerList(onlinePlayers);
+            
             System.out.println("✅ Updated online users: " + onlinePlayers.size() + " players");
         }
     }
@@ -225,18 +222,9 @@ public class Home extends JPanel implements ServerMessageListener {
             }
 
             // Update RankTab với dữ liệu mới
-            updateRankTab(rankedPlayers);
+            rankTab.updateRankList(rankedPlayers, currentPlayer);
             System.out.println("✅ Updated ranking: " + rankedPlayers.size() + " players");
         }
-    }
-
-    private void updateRankTab(List<Player> rankedPlayers) {
-        // Xóa RankTab cũ và tạo mới với data mới
-        tabContentPanel.remove(rankTab);
-        rankTab = new RankTab(rankedPlayers, currentPlayer);
-        tabContentPanel.add(rankTab, "RANK");
-        tabContentPanel.revalidate();
-        tabContentPanel.repaint();
     }
 
     private JPanel createHeaderPanel() {
@@ -264,21 +252,11 @@ public class Home extends JPanel implements ServerMessageListener {
         tabsPanel.setOpaque(false);
 
         homeTabBtn = createTabButton("🏠 Home");
-        profileTabBtn = createTabButton("👤 Profile");
-        historyTabBtn = createTabButton("📊 History");
         rankTabBtn = createTabButton("🏆 Rank");
 
         homeTabBtn.addActionListener(e -> {
             showTab("HOME");
             updateTabButtons("HOME");
-        });
-        profileTabBtn.addActionListener(e -> {
-            showTab("PROFILE");
-            updateTabButtons("PROFILE");
-        });
-        historyTabBtn.addActionListener(e -> {
-            showTab("HISTORY");
-            updateTabButtons("HISTORY");
         });
         rankTabBtn.addActionListener(e -> {
             showTab("RANK");
@@ -288,8 +266,6 @@ public class Home extends JPanel implements ServerMessageListener {
         });
 
         tabsPanel.add(homeTabBtn);
-        tabsPanel.add(profileTabBtn);
-        tabsPanel.add(historyTabBtn);
         tabsPanel.add(rankTabBtn);
 
         gbc.gridx = 1;
@@ -373,8 +349,6 @@ public class Home extends JPanel implements ServerMessageListener {
 
     private void updateTabButtons(String activeTab) {
         homeTabBtn.setActive(activeTab.equals("HOME"));
-        profileTabBtn.setActive(activeTab.equals("PROFILE"));
-        historyTabBtn.setActive(activeTab.equals("HISTORY"));
         rankTabBtn.setActive(activeTab.equals("RANK"));
     }
 
